@@ -73,6 +73,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = 'app.DXVLUsers'
 
 LANGUAGE_CODE = 'en-us'
 
