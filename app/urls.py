@@ -10,6 +10,7 @@ urlpatterns = [
     # Dashboard routes
     path('dashboard/',dashboard_page_view,name="dashboard"),
     path('dashboard/advertisement/logs',dxvl_logs_view,name="logs_view"),
+    path('dashboard/advertisement/logs/uploads',upload_advertisement_logs,name="upload_advertisement_logs"),
     path('dashboard/advertisement/pricing',advertisement_pricing,name="advertisement_pricing"),
 
     # User routes

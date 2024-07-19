@@ -3,6 +3,9 @@ from django.contrib.auth.decorators import login_required
 from app.forms import *
 from app.commons.services import *
 
+def upload_advertisement_logs(request):
+    return render(request,"upload.html")
+
 def advertisement_pricing(request):
     return render(request,"pricing.html")
 

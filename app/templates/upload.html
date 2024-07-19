@@ -1,0 +1,27 @@
+{% extends "./includes/base.html" %}
+{% load static %}
+{% block title %}University DXVL Dashboard{% endblock title %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'assets/vendor/libs/apex-charts/apex-charts.css' %}">
+{% endblock page_css %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 col-lg-12 order-2 order-md-3 order-lg-2 mb-4">
+        <div class="card">
+            <div class="row row-bordered g-0">
+                <div class="col-md-12">
+                    <h5 class="card-header m-0 me-2 pb-3">Upload Advertisement Logs</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+
+{% block page_js %}
+<script src="{% static 'assets/vendor/libs/apex-charts/apexcharts.js' %}"></script>
+<script src="{% static 'assets/js/dashboards-analytics.js' %}"></script>
+{% endblock page_js %}
