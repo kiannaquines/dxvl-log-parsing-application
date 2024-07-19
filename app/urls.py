@@ -17,4 +17,7 @@ urlpatterns = [
     path('dashbboard/users/',users,name="users"),
     path('dashboard/users/groups',users_group,name="users_group"),
     path('dashboard/users/permission',users_permissions,name="users_permission"),
+
+    # Parse logs routes
+    path('dashboard/advertisement/logs/uploads/upload',parse_logs_view,name="parse_logs_view"),
 ]
