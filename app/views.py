@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from app.forms import *
 from app.commons.services import *
+from django.http import HttpResponse
 
 def upload_advertisement_logs(request):
     return render(request,"upload.html")
@@ -29,7 +30,9 @@ def dashboard_page_view(request):
 
 def parse_logs_view(request):
     if request.method == "POST":
-        pass
+        files = request.FILES
+        print(files)
+    return HttpResponse("File uploaded successfully")
 
 def dxvl_logs_view(request):
     return render(request, 'dxvl_logs.html')

@@ -12,9 +12,8 @@
             border-radius: 5px;
             border: 1px dashed #95A2AF;
         }
-
+       
         .dropzone .dz-preview {
-            width: 100%;
             height: 100%;
         }
 
@@ -38,7 +37,8 @@
             <div class="card">
                 <h5 class="card-header">Upload Multiple Log Files</h5>
                 <div class="card-body">
-                    <form action="/upload" class="dropzone" id="dropzone-multi">
+                    <form enctype="multipart/form-data" action="{% url 'parse_logs_view' %}" class="dropzone" id="dropzone-multi">
+                    {% csrf_token %}
                         <div class="dz-message">
                             <img
                                 src="{% static 'assets/img/upload.svg' %}"
@@ -66,7 +66,6 @@
     <script src="{% static 'assets/js/dashboards-analytics.js' %}"></script>
     <script>
         Dropzone.options.dropzoneMulti = {
-            url: "{% url 'parse_logs_view' %}",
             paramName: "files",
             maxFilesize: 5,
             autoProcessQueue: false,
@@ -84,8 +83,6 @@
                         e.preventDefault();
                         myDropzone.processQueue();
                     });
-                } else {
-                    console.error("Submit button not found");
                 }
 
                 this.on("addedfile", function(file) {
