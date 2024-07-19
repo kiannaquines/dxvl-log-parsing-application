@@ -12,8 +12,10 @@
             border-radius: 5px;
             border: 1px dashed #95A2AF;
             display: flex;
+            flex-wrap: wrap;
             justify-content: center;
-            align-items: center; 
+            align-items: center;
+            gap: 5px; 
         }
        
         .dropzone .dz-preview {
@@ -73,8 +75,8 @@
             maxFilesize: 5,
             autoProcessQueue: false,
             uploadMultiple: true,
-            parallelUploads: 20,
-            maxFiles: 20,
+            parallelUploads: 25,
+            maxFiles: 25,
             acceptedFiles: ".txt",
             init: function() {
                 var myDropzone = this;
