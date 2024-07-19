@@ -3,14 +3,17 @@ from django.contrib.auth.decorators import login_required
 from app.forms import *
 from app.commons.services import *
 
+def advertisement_pricing(request):
+    return render(request,"pricing.html")
+
 def users_permissions(request):
-    pass
+    return render(request,"user_permission.html")
 
 def users_group(request):
-    pass
+    return render(request,"user_groups.html")
 
 def users(request):
-    pass
+    return render(request,"users.html")
 
 def login_page_view(request):
     return render(request, 'login.html')

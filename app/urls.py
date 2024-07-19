@@ -2,12 +2,18 @@ from django.urls import path
 from app.views import *
 
 urlpatterns = [
+
+    # Auth routes
     path('',login_page_view,name="login"),
     path('register/',register_page_view,name="register"),
-    path('dashboard/',dashboard_page_view,name="dashboard"),
-    path('aired/',dxvl_logs_view,name="logs_view"),
 
-    path('users/',users,name="users"),
-    path('users/groups',users_group,name="users_group"),
-    path('users/permission',users_permissions,name="users_permission"),
+    # Dashboard routes
+    path('dashboard/',dashboard_page_view,name="dashboard"),
+    path('dashboard/advertisement/logs',dxvl_logs_view,name="logs_view"),
+    path('dashboard/advertisement/pricing',advertisement_pricing,name="advertisement_pricing"),
+
+    # User routes
+    path('dashbboard/users/',users,name="users"),
+    path('dashboard/users/groups',users_group,name="users_group"),
+    path('dashboard/users/permission',users_permissions,name="users_permission"),
 ]
