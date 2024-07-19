@@ -2,7 +2,7 @@
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
     <div class="app-brand demo">
         <a href="" class="app-brand-link">
-            <span class="app-brand-logo mt-3">
+            <span class="app-brand-logo mt-4">
                 <img src="{% static '/assets/img/icons/sidebar_header.png' %}" class="img-fluid" width="200" height="200" alt="" srcset="">
             </span>
         </a>
@@ -16,69 +16,48 @@
             <span class="menu-header-text">Dashboard</span>
         </li>
         <li class="menu-item active">
-            <a href="" class="menu-link">
+            <a href="{% url 'dashboard' %}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-collection"></i>
                 <div data-i18n="Basic">Analytics</div>
             </a>
         </li>
         <li class="menu-header small text-uppercase">
-            <span class="menu-header-text">User Management</span>
+            <span class="menu-header-text">User Auth Management</span>
         </li>
         <li class="menu-item">
-            <a href="" class="menu-link">
+            <a href="{% url 'users' %}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-collection"></i>
                 <div data-i18n="Basic">Users</div>
             </a>
         </li>
-        <li class="menu-header small text-uppercase">
-            <span class="menu-header-text">Inventory Management</span>
-        </li>
         <li class="menu-item">
-            <a href="" class="menu-link">
+            <a href="{% url 'users_permission' %}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-collection"></i>
-                <div data-i18n="Basic">Warehouse Products</div>
+                <div data-i18n="Basic">Permissions</div>
             </a>
         </li>
         <li class="menu-item">
-            <a href="" class="menu-link">
+            <a href="{% url 'users_group' %}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-collection"></i>
-                <div data-i18n="Basic">Products</div>
-            </a>
-        </li>
-        <li class="menu-item">
-            <a href="" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-collection"></i>
-                <div data-i18n="Basic">Inventory</div>
+                <div data-i18n="Basic">Groups</div>
             </a>
         </li>
         <li class="menu-header small text-uppercase">
-            <span class="menu-header-text">Sales Management</span>
+            <span class="menu-header-text">Logs</span>
         </li>
         <li class="menu-item">
-            <a href="" class="menu-link">
+            <a href="{% url 'logs_view' %}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-collection"></i>
-                <div data-i18n="Basic">Sales</div>
-            </a>
-        </li>
-        <li class="menu-item">
-            <a href="" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-collection"></i>
-                <div data-i18n="Basic">Sales Invoice</div>
+                <div data-i18n="Basic">Aired Advertisement</div>
             </a>
         </li>
         <li class="menu-header small text-uppercase">
-            <span class="menu-header-text">Others</span>
+            <span class="menu-header-text">Price</span>
         </li>
         <li class="menu-item">
             <a href="" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-collection"></i>
-                <div data-i18n="Basic">Product Category</div>
-            </a>
-        </li>
-        <li class="menu-item">
-            <a href="" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-collection"></i>
-                <div data-i18n="Basic">Supplier</div>
+                <div data-i18n="Basic">Advertisement Price</div>
             </a>
         </li>
     </ul>

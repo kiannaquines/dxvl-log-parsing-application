@@ -3,6 +3,15 @@ from django.contrib.auth.decorators import login_required
 from app.forms import *
 from app.commons.services import *
 
+def users_permissions(request):
+    pass
+
+def users_group(request):
+    pass
+
+def users(request):
+    pass
+
 def login_page_view(request):
     return render(request, 'login.html')
 
