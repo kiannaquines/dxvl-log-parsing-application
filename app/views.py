@@ -2,8 +2,12 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from app.forms import *
 from app.commons.services import *
-from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime
+
+def login_page_view(request):
+    return render(request, 'login.html')
+
+def register_page_view(request):
+    return render(request, 'register.html')
 
 def dashboard_page_view(request):
     return render(request, 'dashboard.html')
