@@ -1,5 +1,8 @@
 from django.urls import path
 from app.views import *
+from app.app_views.advertisement_views import *
+from app.app_views.dashboard_views import *
+from app.app_views.users_views import *
 
 urlpatterns = [
 
