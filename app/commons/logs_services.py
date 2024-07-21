@@ -20,7 +20,7 @@ def process_file(filename, pattern):
     batch = []
     batch_size = 1000
     try:
-        with open(os.path.join(os.getcwd(), 'logs', filename), 'r') as file:
+        with open(filename,'r') as file:
             for line in file:
                 result = process_line(line, pattern)
                 if result:
@@ -41,7 +41,7 @@ def parse_dxvl_logs(log_files):
     log_pattern = re.compile(r"(\d{2}-[A-Z][a-z]{2}-\d{4} \d{2}:\d{2}:\d{2}) (.*?) - (.*)")
 
     with ThreadPoolExecutor(max_workers=12) as executor:
-        futures = [executor.submit(file, file, log_pattern) for file in log_files]
+        futures = [executor.submit(process_file, file, log_pattern) for file in log_files]
         for future in futures:
             future.result()
 
