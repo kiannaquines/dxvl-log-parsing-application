@@ -2,7 +2,7 @@ import re
 import os
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
-
+from app.commons.common_services import create_bulk
 def time_parser(time_str):
     return datetime.strptime(time_str, '%d-%b-%Y %H:%M:%S')
 

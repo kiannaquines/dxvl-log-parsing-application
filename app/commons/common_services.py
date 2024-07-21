@@ -9,3 +9,6 @@ def order_objects(object, order_criteria):
 
 def get_object_by_id(object, id):
     return object.get(pk=id)
+
+def create_bulk_query(object, **kwargs):
+    return object.bulk_create(**kwargs)
