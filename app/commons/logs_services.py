@@ -4,6 +4,7 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from app.commons.common_services import create_bulk_query
 from app.models import DXVLLogs
+from django.http import HttpResponse
 
 def time_parser(time_str):
     return datetime.strptime(time_str, '%d-%b-%Y %H:%M:%S')
@@ -29,11 +30,11 @@ def process_file(filename, pattern):
                         create_bulk_query(DXVLLogs,batch)
                         processed += len(batch)
                         batch = []
+                        print(f"from batch > batch sized")
         if batch:
             create_bulk_query(DXVLLogs,batch)
             processed += len(batch)
-        
-        print(f"Completed: {filename}, Processed: {processed} entries")
+            print(f"from if batch")        
     except Exception as e:
         print(f"Error processing {filename}: {e}")
 
@@ -45,4 +46,4 @@ def parse_dxvl_logs(log_files):
         for future in futures:
             future.result()
 
-    pass
+    return HttpResponse("DXVL logs parsed successfully")
