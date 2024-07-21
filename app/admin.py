@@ -4,9 +4,10 @@ from app.models import *
 from django.contrib.auth.admin import UserAdmin as OriginalAdmin
 
 class DXVLLogsAdmin(admin.ModelAdmin):
-    list_display = ('log_id', 'date_aired', 'artist', 'advertisement', 'added_by', 'date_added')
+    list_display = ('artist', 'date_aired', 'advertisement', 'added_by', 'date_added')
     search_fields = ('date_aired', 'artist', 'advertisement')
     list_filter = ('date_aired', 'added_by','artist')
+    list_per_page = 50
 
 class DXVLUsersAdmin(OriginalAdmin):
     list_display = ('username', 'email', 'date_joined',)

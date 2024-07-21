@@ -55,7 +55,7 @@
                             <span class="note">Selected your files and click the upload button.</span>
                         </div>
                         <div class="fallback">
-                            <input name="file" type="file" style="visibility: hidden;">
+                            <input name="file" type="file" style="visibility: hidden;" multiple>
                         </div>
                     </form>
                     <button type="submit" class="btn btn-primary btn-lg mt-3">Upload Logs</button>
@@ -71,7 +71,7 @@
     <script src="{% static 'assets/js/dashboards-analytics.js' %}"></script>
     <script>
         Dropzone.options.dropzoneMulti = {
-            paramName: "files",
+            paramName: "file",
             maxFilesize: 5,
             autoProcessQueue: false,
             uploadMultiple: true,
