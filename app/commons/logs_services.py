@@ -5,9 +5,12 @@ from app.commons.common_services import create_bulk_query
 from app.models import DXVLLogs
 from django.http import HttpResponse
 from datetime import datetime
+from django.utils import timezone
 
 def time_parser(time_str):
-    return datetime.strptime(time_str, '%d-%b-%Y %H:%M:%S')
+    naive_datetime = datetime.strptime(time_str, '%d-%b-%Y %H:%M:%S')
+    aware_datetime = timezone.make_aware(naive_datetime, timezone.get_default_timezone())
+    return aware_datetime
 
 def process_line(request, line, pattern):
     match = pattern.match(line)
