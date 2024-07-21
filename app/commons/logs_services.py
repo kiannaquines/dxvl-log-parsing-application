@@ -2,7 +2,9 @@ import re
 import os
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
-from app.commons.common_services import create_bulk
+from app.commons.common_services import create_bulk_query
+from app.models import DXVLLogs
+
 def time_parser(time_str):
     return datetime.strptime(time_str, '%d-%b-%Y %H:%M:%S')
 
@@ -24,20 +26,18 @@ def process_file(filename, pattern):
                 if result:
                     batch.append(result)
                     if len(batch) >= batch_size:
-                        cursor.executemany("INSERT INTO airtime_logs VALUES (?,?,?)", batch)
+                        create_bulk_query(DXVLLogs,batch)
                         processed += len(batch)
                         batch = []
         if batch:
-            cursor.executemany("INSERT INTO airtime_logs VALUES (?,?,?)", batch)
+            create_bulk_query(DXVLLogs,batch)
             processed += len(batch)
-        connection.commit()
+        
         print(f"Completed: {filename}, Processed: {processed} entries")
     except Exception as e:
         print(f"Error processing {filename}: {e}")
-    finally:
-        connection.close()
 
-def parse_dxvl_logs(log_files,**kwargs):
+def parse_dxvl_logs(log_files):
     log_pattern = re.compile(r"(\d{2}-[A-Z][a-z]{2}-\d{4} \d{2}:\d{2}:\d{2}) (.*?) - (.*)")
 
     with ThreadPoolExecutor(max_workers=12) as executor:
