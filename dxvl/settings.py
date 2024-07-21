@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+import re
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -97,3 +98,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+BATCH_SIZE = 1000
+PATTERN = re.compile(r"(\d{2}-[A-Z][a-z]{2}-\d{4} \d{2}:\d{2}:\d{2}) (.*?) - (.*)")
