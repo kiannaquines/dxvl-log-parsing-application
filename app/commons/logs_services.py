@@ -13,7 +13,13 @@ def process_line(line, pattern):
     match = pattern.match(line)
     if match:
         time, artist, advertisement = match.groups()
-        return (time_parser(time), artist, advertisement)
+
+        return DXVLLogs(
+            date_aired = time_parser(time),
+            artist = artist,
+            advertisement = advertisement
+        )
+    
     return None
 
 def process_file(filename, pattern):
@@ -27,12 +33,12 @@ def process_file(filename, pattern):
                 if result:
                     batch.append(result)
                     if len(batch) >= batch_size:
-                        create_bulk_query(DXVLLogs,batch)
+                        create_bulk_query(DXVLLogs.objects,batch)
                         processed += len(batch)
                         batch = []
                         print(f"from batch > batch sized")
         if batch:
-            create_bulk_query(DXVLLogs,batch)
+            create_bulk_query(DXVLLogs.objects,batch)
             processed += len(batch)
             print(f"from if batch")        
     except Exception as e:
