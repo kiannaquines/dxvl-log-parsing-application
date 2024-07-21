@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
+from app.commons.logs_services import *
 
 def upload_advertisement_logs(request):
     return render(request,"upload.html")
