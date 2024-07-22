@@ -66,4 +66,14 @@ def dxvl_monthly_report_view(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context['page_object'] = page_obj
-    return render(request, 'report.html',context)
+    return render(request, 'monthly.html',context)
+
+
+def dxvl_daily_report_view(request):
+    context = {}
+    dxvl_logs = all_objects_only(DXVLLogs.objects,'date_aired','artist','advertisement','status','date_added')
+    paginator = Paginator(dxvl_logs, 50)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context['page_object'] = page_obj
+    return render(request, 'daily.html',context)

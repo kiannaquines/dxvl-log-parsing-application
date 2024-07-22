@@ -3,8 +3,8 @@
 {% block title %}University DXVL Dashboard{% endblock title %}
 
 {% block page_css %}
-<link rel="stylesheet" href="{% static 'assets/vendor/libs/apex-charts/apex-charts.css' %}">
-<link rel="stylesheet" href="{% static 'assets/vendor/css/special.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/vendor/libs/apex-charts/apex-charts.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/vendor/css/special.css' %}">
 {% endblock page_css %}
 
 {% block content %}
@@ -12,7 +12,7 @@
     <div class="col-12 mb-3">
         <div class="card">
             <div class="card-header remove-padding-bottom">
-                <h5>Export Options</h5>
+                <h5>Export Daily Logs Options</h5>
                 <span class="text-muted">Export your data using the options below.</span>
             </div>
             <form method="get">
@@ -20,10 +20,10 @@
                     <div class="col">
                         <div class="row">
                             <div class="col-md-4">
-                                <input type="month" class="form-control" id="month_from" name="month_from" value="" />
+                                <input type="date" class="form-control" id="date_from" name="date_from" value="" />
                             </div>
                             <div class="col-md-4">
-                                <input type="month" class="form-control" id="month_to" name="month_to" />
+                                <input type="date" class="form-control" id="date_to" name="date_to" />
                             </div>
                             <div class="col-md-4">
                                 <button type="submit" class="btn btn-primary w-100">Export PDF</button>
@@ -152,25 +152,29 @@
 <script src="{% static 'assets/vendor/libs/apex-charts/apexcharts.js' %}"></script>
 <script src="{% static 'assets/js/dashboards-analytics.js' %}"></script>
 <script>
-    $(function(){
-        $(document).ready(function() {
-            let today = new Date();
+    $(document).ready(function() {
+        let today = new Date();
 
-            let monthForm = today.getMonth() + 1;
-            let yearForm = today.getFullYear();
-            let monthTo = today.getMonth() + 2;
-            let yearTo = today.getFullYear();
+        let monthForm = today.getMonth() + 1;
+        let yearForm = today.getFullYear();
+        let dayForm = today.getDate();
 
-            if (monthForm < 10) monthForm = '0' + monthForm;
-            if (monthTo < 10) monthTo = '0' + monthTo;
+        let nextMonth = new Date(today);
+        nextMonth.setMonth(today.getMonth() + 1);
+        let monthTo = nextMonth.getMonth() + 1;
+        let yearTo = nextMonth.getFullYear();
+        let dayTo = today.getDate();
 
-            let valuemonthFrom = `${yearForm}-${monthForm}`;
-            let valuemonthTo = `${yearTo}-${monthTo}`;
+        if (monthForm < 10) monthForm = '0' + monthForm;
+        if (dayForm < 10) dayForm = '0' + dayForm;
+        if (monthTo < 10) monthTo = '0' + monthTo;
+        if (dayTo < 10) dayTo = '0' + dayTo;
 
-            $('#month_from').val(valuemonthFrom);
-            $('#month_to').val(valuemonthTo);
+        let valueFrom = `${yearForm}-${monthForm}-${dayForm}`;
+        let valueTo = `${yearTo}-${monthTo}-${dayTo}`;
 
-        });
-    })
+        $('#date_from').val(valueFrom);
+        $('#date_to').val(valueTo);
+    });
 </script>
 {% endblock page_js %}

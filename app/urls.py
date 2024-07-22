@@ -16,6 +16,7 @@ urlpatterns = [
     path('dashboard/advertisement/logs/uploads',upload_advertisement_logs,name="upload_advertisement_logs"),
     path('dashboard/advertisement/pricing',advertisement_pricing,name="advertisement_pricing"),
     path('dashboard/advertisement/report/monthly',dxvl_monthly_report_view,name="dxvl_monthly_report_view"),
+    path('dashboard/advertisement/report/daily',dxvl_daily_report_view,name="dxvl_daily_report_view"),
 
     # User routes
     path('dashbboard/users/',users,name="users"),
