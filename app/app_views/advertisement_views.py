@@ -52,9 +52,18 @@ def advertisement_pricing(request):
 
 def dxvl_logs_view(request):
     context = {}
-    dxvl_logs = all_objects_only(DXVLLogs.objects,'date_aired','artist','advertisement','date_added')
+    dxvl_logs = all_objects_only(DXVLLogs.objects,'date_aired','artist','advertisement','status','date_added')
     paginator = Paginator(dxvl_logs, 50)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context['page_object'] = page_obj
     return render(request, 'dxvl_logs.html',context)
+
+def dxvl_monthly_report_view(request):
+    context = {}
+    dxvl_logs = all_objects_only(DXVLLogs.objects,'date_aired','artist','advertisement','status','date_added')
+    paginator = Paginator(dxvl_logs, 50)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context['page_object'] = page_obj
+    return render(request, 'report.html',context)

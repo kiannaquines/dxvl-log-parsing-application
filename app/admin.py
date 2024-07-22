@@ -4,7 +4,7 @@ from app.models import *
 from django.contrib.auth.admin import UserAdmin as OriginalAdmin
 
 class DXVLLogsAdmin(admin.ModelAdmin):
-    list_display = ('artist', 'date_aired', 'advertisement','added_by', 'date_added')
+    list_display = ('artist', 'date_aired','status','advertisement','added_by', 'date_added')
     search_fields = ('date_aired', 'artist', 'advertisement')
     list_filter = ('date_aired', 'added_by','artist')
     list_per_page = 1000
@@ -36,6 +36,11 @@ class DXVLUsersAdmin(OriginalAdmin):
 class DXVLLogNamesAdmin(admin.ModelAdmin):
     list_display = ('file_name', 'file_lines', 'file_state')
 
+class DXVLAdvertisementPricesAdmin(admin.ModelAdmin):
+    list_display = ('advertisement', 'price')
+
+
+admin.site.register(DXVLAdvertisementPrices, DXVLAdvertisementPricesAdmin)
 admin.site.register(DXVLLogs, DXVLLogsAdmin)
 admin.site.register(DXVLUsers, DXVLUsersAdmin)
 admin.site.register(DXVLLogNames, DXVLLogNamesAdmin)

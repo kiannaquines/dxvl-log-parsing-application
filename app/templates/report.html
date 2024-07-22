@@ -1,0 +1,176 @@
+{% extends "./includes/base.html" %}
+{% load static %}
+{% block title %}University DXVL Dashboard{% endblock title %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'assets/vendor/libs/apex-charts/apex-charts.css' %}">
+<link rel="stylesheet" href="{% static 'assets/vendor/css/special.css' %}">
+{% endblock page_css %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-3">
+        <div class="card">
+            <div class="card-header remove-padding-bottom">
+                <h5>Export Options</h5>
+                <span class="text-muted">Export your data using the options below.</span>
+            </div>
+            <form method="get">
+                <div class="m-4">
+                    <div class="col">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <input type="month" class="form-control" id="month_from" name="month_from" value="" />
+                            </div>
+                            <div class="col-md-4">
+                                <input type="month" class="form-control" id="month_to" name="month_to" />
+                            </div>
+                            <div class="col-md-4">
+                                <button type="submit" class="btn btn-primary w-100">Export PDF</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col-12 col-lg-12 order-2 order-md-3 order-lg-2 mb-4">
+        <div class="card">
+            <div class="card">
+                <div class="card-header remove-padding-bottom">
+                    <h5>DXVL Aired Advertisement Logs</h5>
+                    <span class="text-muted">Your all existing logs in your database.</span>
+                </div>
+                <div class="table-responsive text-nowrap">
+                    <table class="table" id="MydataTable">
+                        <caption class="ms-3">Aired advertisement of DXVL</caption>
+                        <thead>
+                            <tr>
+                                <th>Advertisement</th>
+                                <th>Artist</th>
+                                <th>Date Aired</th>
+                                <th>Remarks</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for dxvl_log in page_object %}
+                            <tr>
+                                <td>{{ dxvl_log.advertisement }}</td>
+                                <td>
+                                    <span class="fw-medium">
+                                        {{ dxvl_log.artist }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {{ dxvl_log.date_aired }}
+                                </td>
+                                <td>
+                                    {% if dxvl_log.remarks == True %}
+                                    <span class="badge bg-label-primary me-1">
+                                        Aired
+                                    </span>
+                                    {% else %}
+                                    <span class="badge bg-label-danger me-1">
+                                        Unaired
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if dxvl_log.status == True %}
+                                    <span class="badge bg-label-primary me-1">
+                                        Active
+                                    </span>
+                                    {% else %}
+                                    <span class="badge bg-label-danger me-1">
+                                        Inactive
+                                    </span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    <nav aria-label="Page navigation" class="m-3">
+                        <ul class="pagination">
+                            {% if page_object.has_previous %}
+                                <li class="page-item first">
+                                    <a class="page-link" href="?page=1"><i class="tf-icon bx bx-chevrons-left"></i></a>
+                                </li>
+                                <li class="page-item prev">
+                                    <a class="page-link" href="?page={{ page_object.previous_page_number }}"><i class="tf-icon bx bx-chevron-left"></i></a>
+                                </li>
+                            {% else %}
+                                <li class="page-item first disabled">
+                                    <a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-left"></i></a>
+                                </li>
+                                <li class="page-item prev disabled">
+                                    <a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevron-left"></i></a>
+                                </li>
+                            {% endif %}
+
+                            {% for num in page_object.paginator.page_range %}
+                                {% if page_object.number == num %}
+                                    <li class="page-item active">
+                                        <a class="page-link" href="javascript:void(0);">{{ num }}</a>
+                                    </li>
+                                {% elif num > page_object.number|add:'-3' and num < page_object.number|add:'3' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if page_object.has_next %}
+                                <li class="page-item next">
+                                    <a class="page-link" href="?page={{ page_object.next_page_number }}"><i class="tf-icon bx bx-chevron-right"></i></a>
+                                </li>
+                                <li class="page-item last">
+                                    <a class="page-link" href="?page={{ page_object.paginator.num_pages }}"><i class="tf-icon bx bx-chevrons-right"></i></a>
+                                </li>
+                            {% else %}
+                                <li class="page-item next disabled">
+                                    <a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevron-right"></i></a>
+                                </li>
+                                <li class="page-item last disabled">
+                                    <a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-right"></i></a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+
+{% block page_js %}
+<script src="{% static 'assets/vendor/libs/apex-charts/apexcharts.js' %}"></script>
+<script src="{% static 'assets/js/dashboards-analytics.js' %}"></script>
+<script>
+    $(function(){
+        $(document).ready(function() {
+            let today = new Date();
+
+            let monthForm = today.getMonth() + 1;
+            let yearForm = today.getFullYear();
+            let monthTo = today.getMonth() + 2;
+            let yearTo = today.getFullYear();
+
+            if (monthForm < 10) monthForm = '0' + monthForm;
+            if (monthTo < 10) monthTo = '0' + monthTo;
+
+            let valuemonthFrom = `${yearForm}-${monthForm}`;
+            let valuemonthTo = `${yearTo}-${monthTo}`;
+
+            $('#month_from').val(valuemonthFrom);
+            $('#month_to').val(valuemonthTo);
+
+        });
+    })
+</script>
+{% endblock page_js %}

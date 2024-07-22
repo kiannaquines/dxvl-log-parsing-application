@@ -4,6 +4,10 @@ def all_objects(object):
 def all_objects_only(object,*fields):
     return object.only(*fields)
 
+def all_objects_only_number(object,*fields,number):
+    return object.only(*fields).order_by('date_aired')[:number]
+
+
 def filter_objects_exist(object, **kwargs):
     return object.filter(**kwargs).exists()
 

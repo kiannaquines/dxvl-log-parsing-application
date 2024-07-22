@@ -25,6 +25,7 @@
                                 <th>Advertisement</th>
                                 <th>Artist</th>
                                 <th>Date Aired</th>
+                                <th>Remarks</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
@@ -39,6 +40,17 @@
                                 </td>
                                 <td>
                                     {{ dxvl_log.date_aired }}
+                                </td>
+                                <td>
+                                    {% if dxvl_log.remarks == True %}
+                                    <span class="badge bg-label-primary me-1">
+                                        Aired
+                                    </span>
+                                    {% else %}
+                                    <span class="badge bg-label-danger me-1">
+                                        Unaired
+                                    </span>
+                                    {% endif %}
                                 </td>
                                 <td>
                                     {% if dxvl_log.status == True %}

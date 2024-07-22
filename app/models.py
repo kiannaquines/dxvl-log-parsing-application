@@ -20,6 +20,7 @@ class DXVLLogs(models.Model):
     advertisement = models.CharField(max_length=255, blank=True)
     added_by = models.ForeignKey(DXVLUsers, on_delete=models.CASCADE,editable=False)
     status = models.BooleanField(default=True)
+    remarks = models.BooleanField(default=True)
     date_added = models.DateTimeField(auto_now_add=True, null=False, blank=False)
 
     def __str__(self) -> str:
@@ -40,3 +41,15 @@ class DXVLLogNames(models.Model):
     class Meta:
         db_table = 'dxvl_log_filenames'
         verbose_name = 'DXVL Log File Name'
+
+class DXVLAdvertisementPrices(models.Model):
+    price = models.FloatField()
+    advertisement = models.CharField(max_length=255, blank=True)
+
+
+    def __str__(self) -> str:
+        return f'Advertisement {self.advertisement} price: {self.price}'
+    
+    class Meta:
+        db_table = 'dxvl_advertisement_prices'
+        verbose_name = 'DXVL Advertisement Price'
