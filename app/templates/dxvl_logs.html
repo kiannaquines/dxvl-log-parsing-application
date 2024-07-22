@@ -13,6 +13,9 @@
             <div class="card">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="card-header">DXVL Aired Advertisement Logs</h5>
+                    <div class="m-3">
+                        <a href="#" class="btn btn-primary">Export PDF</a>
+                    </div>
                 </div>
                 <div class="table-responsive text-nowrap">
                     <table class="table" id="MydataTable">
@@ -38,7 +41,15 @@
                                     {{ dxvl_log.date_aired }}
                                 </td>
                                 <td>
-                                    <span class="badge bg-label-primary me-1">Active</span>
+                                    {% if dxvl_log.status == True %}
+                                    <span class="badge bg-label-primary me-1">
+                                        Active
+                                    </span>
+                                    {% else %}
+                                    <span class="badge bg-label-danger me-1">
+                                        Inactive
+                                    </span>
+                                    {% endif %}
                                 </td>
                             </tr>
                             {% endfor %}
