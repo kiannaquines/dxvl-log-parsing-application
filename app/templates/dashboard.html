@@ -4,6 +4,7 @@
 
 {% block page_css %}
 <link rel="stylesheet" href="{% static 'assets/vendor/libs/apex-charts/apex-charts.css' %}">
+<link rel="stylesheet" href="{% static 'assets/vendor/css/special.css' %}">
 {% endblock page_css %}
 
 {% block content %}
@@ -117,8 +118,8 @@
     <div class="col-md-12 col-lg-12 order-2 mb-4">
         <div class="card h-100">
             <div class="card">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="card-header">30 Recent Aired Advertisement</h5>
+                <div class="card-header remove-padding-bottom">
+                    <h5>30 Recent Aired Advertisement</h5>
                 </div>
                 <div class="table-responsive text-nowrap">
                     <table class="table" id="MydataTable">
@@ -144,13 +145,13 @@
                                     {{ dxvl_log.date_aired }}
                                 </td>
                                 <td>
-                                    {% if dxvl_log.status == True %}
+                                    {% if dxvl_log.remarks == True %}
                                     <span class="badge bg-label-primary me-1">
-                                        Active
+                                        Aired
                                     </span>
                                     {% else %}
                                     <span class="badge bg-label-danger me-1">
-                                        Inactive
+                                        Unaired
                                     </span>
                                     {% endif %}
                                 </td>
