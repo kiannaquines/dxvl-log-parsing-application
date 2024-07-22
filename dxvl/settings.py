@@ -102,3 +102,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 BATCH_SIZE = 1000
 PATTERN = re.compile(r"(\d{2}-[A-Z][a-z]{2}-\d{4} \d{2}:\d{2}:\d{2}) (.*?) - (.*)")
+
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 100000

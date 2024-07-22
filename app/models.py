@@ -19,6 +19,7 @@ class DXVLLogs(models.Model):
     artist = models.CharField(max_length=255, blank=True)
     advertisement = models.CharField(max_length=255, blank=True)
     added_by = models.ForeignKey(DXVLUsers, on_delete=models.CASCADE,editable=False)
+    status = models.BooleanField(default=True)
     date_added = models.DateTimeField(auto_now_add=True, null=False, blank=False)
 
     def __str__(self) -> str:

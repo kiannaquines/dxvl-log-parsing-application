@@ -2,7 +2,10 @@ from django.shortcuts import render
 from django.http import JsonResponse,HttpResponse
 from django.contrib.auth.decorators import login_required
 from app.commons.logs_services import *
+from app.commons.common_services import all_objects_only
 from django.urls import reverse_lazy
+from app.models import DXVLLogs
+from django.core.paginator import Paginator
 
 @login_required(login_url=reverse_lazy('login'))
 def parse_logs_view(request):
@@ -11,10 +14,10 @@ def parse_logs_view(request):
         result = parse_dxvl_logs(files)
 
         if result == 'file_exists':
-            
+
             return JsonResponse({
                     "type": result,
-                    "message": "Logs with the same name already exist. Please rename your logs and try again."
+                    "message": "Logs with the same name already exist or already process by the system."
             })
         
         elif result == 'file_error':
@@ -48,4 +51,10 @@ def advertisement_pricing(request):
     return render(request,"pricing.html")
 
 def dxvl_logs_view(request):
-    return render(request, 'dxvl_logs.html')
+    context = {}
+    dxvl_logs = all_objects_only(DXVLLogs.objects,'date_aired','artist','advertisement','date_added')
+    paginator = Paginator(dxvl_logs, 50)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context['page_object'] = page_obj
+    return render(request, 'dxvl_logs.html',context)

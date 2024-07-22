@@ -7,7 +7,7 @@ class DXVLLogsAdmin(admin.ModelAdmin):
     list_display = ('artist', 'date_aired', 'advertisement','added_by', 'date_added')
     search_fields = ('date_aired', 'artist', 'advertisement')
     list_filter = ('date_aired', 'added_by','artist')
-    list_per_page = 500
+    list_per_page = 1000
 
 class DXVLUsersAdmin(OriginalAdmin):
     list_display = ('username', 'email', 'date_joined',)

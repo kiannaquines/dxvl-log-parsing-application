@@ -1,5 +1,4 @@
-{% load static %}
-<!DOCTYPE html>
+{% load static %}<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -50,7 +49,9 @@
     <script>
         $(function(){
             $('#MydataTable').DataTable({
-                pageLength: 50
+                pageLength: 50,
+                paging: false,
+                lengthChange: true
             })
             $("#MydataTable_wrapper").children().first().addClass("m-3")
             $("#MydataTable_wrapper").children().last().addClass("m-3")

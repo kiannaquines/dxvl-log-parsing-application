@@ -1,6 +1,9 @@
 def all_objects(object):
     return object.all()
 
+def all_objects_only(object,*fields):
+    return object.only(*fields)
+
 def filter_objects_exist(object, **kwargs):
     return object.filter(**kwargs).exists()
 

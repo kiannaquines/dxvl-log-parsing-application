@@ -17,6 +17,10 @@
             align-items: center;
             gap: 5px; 
         }
+
+        .dz-started{
+            height: 100%;
+        }
        
         .dropzone .dz-preview {
             height: 100%;
@@ -63,6 +67,11 @@
             </div>
         </div>
     </div>
+
+    <div style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;" id="message_box">
+        
+    </div>
+
 {% endblock content %}
 
 
@@ -74,10 +83,15 @@
             maxFilesize: 5,
             autoProcessQueue: false,
             uploadMultiple: true,
-            parallelUploads: 25,
-            maxFiles: 25,
+            parallelUploads: 24,
+            maxFiles: 24,
             acceptedFiles: ".txt",
             init: function() {
+
+                function messageBox(style, message, title){
+                    
+                }
+
                 var myDropzone = this;
 
                 var submitButton = document.querySelector("button[type=submit]");
@@ -90,19 +104,61 @@
                 }
 
                 this.on("addedfile", function(file) {
-                    // alert(`File: ${file.name}, is added`);
+
+                    if(file){
+                        var style = "primary";
+                        var message = `You have successfully added ${file.name} file.`;
+                        var title = "File Added";
+
+                        var template = `
+                            <div class="bs-toast toast fade show bg-${style} mb-3" role="alert" aria-live="assertive" aria-atomic="true">
+                                <div class="toast-header">
+                                    <i class='bx bx-check me-2'></i>
+                                <div class="me-auto fw-medium" id="type">${title}</div>
+                                    <small>now</small>
+                                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                                </div>
+                                <div class="toast-body">
+                                    ${message}
+                                </div>
+                            </div>`
+
+                        $("#message_box").append(template)
+                    }
+                    
                 });
 
-                this.on("success", function(file, response) {
-                    console.log(response)
-                });
+                this.on("success", function(file, resp) {
 
-                this.on("complete", function(file) {
+                    if(resp.type == 'file_exists'){
+                        var style = "danger";
+                        var message = `File is already process by the system, you can check the log section for more info.`;
+                        var title = "File already exists";
+                    }else if(resp.type == 'file_error'){
+                        var style = "danger";
+                        var message = `Something error happened in parsing the file, please check first the content of the log file.`;
+                        var title = "Error parsing file";
+                    }else{
+                        var style = "primary";
+                        var message = `You have successfully parsed the log file, please see the result in logs section.`;
+                        var title = "Success parsing of files";
+                    }
+
+                    var template = `
+                        <div class="bs-toast toast fade show bg-${style} mb-3" role="alert" aria-live="assertive" aria-atomic="true">
+                            <div class="toast-header">
+                                <i class='bx bx-check me-2'></i>
+                            <div class="me-auto fw-medium" id="type">${title}</div>
+                                <small>now</small>
+                                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                            </div>
+                            <div class="toast-body">
+                                ${message}
+                            </div>
+                        </div>`                    
+
+                    $("#message_box").append(template)
                     myDropzone.removeFile(file);
-                });
-
-                this.on("error", function(file, errorMessage, xhr) {
-                    // alert(`Error: ${errorMessage}`);
                 });
             }
         };
