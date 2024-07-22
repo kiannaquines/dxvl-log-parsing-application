@@ -13,7 +13,7 @@ def time_parser(time_str):
     aware_datetime = timezone.make_aware(naive_datetime, timezone.get_default_timezone())
     return aware_datetime
 
-def process_line(request, line, pattern):
+def process_line(line, pattern):
     match = pattern.match(line)
     if match:
         time, artist, advertisement = match.groups()
@@ -21,16 +21,15 @@ def process_line(request, line, pattern):
             date_aired = time_parser(time),
             artist = artist,
             advertisement = advertisement,
-            added_by = request.user,
         )
     return None
 
-def process_file(filename, pattern, request):
+def process_file(filename, pattern):
     processed = 0
     batch = []
     try:
         for line in filename.read().decode('latin-1').split('\n'):
-            result = process_line(request, line, pattern)
+            result = process_line(line, pattern)
             if result:
                 batch.append(result)
                 if len(batch) >= BATCH_SIZE:
@@ -43,10 +42,10 @@ def process_file(filename, pattern, request):
     except Exception as e:
         print(f"Error processing {filename}: {e}")
 
-def parse_dxvl_logs(request,log_files):
+def parse_dxvl_logs(log_files):
     log_pattern = PATTERN
     with ThreadPoolExecutor(max_workers=12) as executor:
-        futures = [executor.submit(process_file, file, log_pattern, request) for key, file in log_files]
+        futures = [executor.submit(process_file, file, log_pattern) for key, file in log_files]
         for future in futures:
             future.result()
     return HttpResponse("DXVL logs parsed successfully")

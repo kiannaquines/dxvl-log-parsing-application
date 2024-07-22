@@ -8,10 +8,7 @@ from django.urls import reverse_lazy
 def parse_logs_view(request):
     if request.method == "POST":
         files = request.FILES.items()
-        
-        if request.user.is_authenticated:
-            print("this is the user: ", request.user)
-        # parse_dxvl_logs(request, files)
+        parse_dxvl_logs(request, files)
     return HttpResponse("File uploaded successfully")
 
 @login_required(login_url=reverse_lazy('login'))
