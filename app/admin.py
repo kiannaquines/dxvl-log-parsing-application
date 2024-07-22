@@ -31,5 +31,7 @@ class DXVLUsersAdmin(OriginalAdmin):
     list_filter = ('date_joined', 'is_staff', 'is_superuser', 'is_active')
     search_fields = ('username', 'email', 'first_name', 'last_name')
     readonly_fields = ('date_joined', 'last_login')
+
 admin.site.register(DXVLLogs, DXVLLogsAdmin)
 admin.site.register(DXVLUsers, DXVLUsersAdmin)
+admin.site.register(DXVLLogNames)

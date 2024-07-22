@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.utils import timezone
 
 class DXVLUsers(AbstractUser):
     user_address = models.CharField(max_length=255, blank=True)
@@ -28,3 +27,14 @@ class DXVLLogs(models.Model):
     class Meta:
         db_table = 'dxvl_aired_logs'
         verbose_name = 'DXVL Log'
+
+class DXVLLogNames(models.Model):
+    file_name = models.CharField(max_length=255, blank=True)
+    file_state = models.BooleanField(default=False)
+
+    def __str__(self) -> str:
+        return self.file_name
+    
+    class Meta:
+        db_table = 'dxvl_log_filenames'
+        verbose_name = 'DXVL Log File Name'
