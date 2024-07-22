@@ -6,7 +6,7 @@ class DXVLUsers(AbstractUser):
     user_mobile_number = models.CharField(max_length=15, blank=True)
     
     def __str__(self) -> str:
-        return f'{self.first_name} {self.last_name}'
+        return self.username
     
     class Meta:
         db_table = 'dxvl_users'
@@ -18,7 +18,7 @@ class DXVLLogs(models.Model):
     date_aired = models.DateTimeField(auto_now=False,null=False, blank=False)
     artist = models.CharField(max_length=255, blank=True)
     advertisement = models.CharField(max_length=255, blank=True)
-    added_by = models.ForeignKey(DXVLUsers, on_delete=models.CASCADE)
+    added_by = models.ForeignKey(DXVLUsers, on_delete=models.CASCADE,editable=False)
     date_added = models.DateTimeField(auto_now_add=True, null=False, blank=False)
 
     def __str__(self) -> str:
@@ -30,6 +30,7 @@ class DXVLLogs(models.Model):
 
 class DXVLLogNames(models.Model):
     file_name = models.CharField(max_length=255, blank=True)
+    file_lines = models.IntegerField(default=0)
     file_state = models.BooleanField(default=False)
 
     def __str__(self) -> str:

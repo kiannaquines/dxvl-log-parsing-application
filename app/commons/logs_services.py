@@ -1,12 +1,15 @@
 import re
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
-from app.commons.common_services import create_bulk_query
-from app.models import DXVLLogs
-from django.http import HttpResponse
+from app.commons.common_services import create_bulk_query,add_object,filter_objects_exist
+from app.models import DXVLLogs,DXVLLogNames,DXVLUsers
+from django.http import JsonResponse
 from datetime import datetime
 from django.utils import timezone
 from dxvl.settings import BATCH_SIZE, PATTERN
+
+def check_filename(filename):
+    return filter_objects_exist(DXVLLogNames.objects, file_name=filename)
 
 def time_parser(time_str):
     naive_datetime = datetime.strptime(time_str, '%d-%b-%Y %H:%M:%S')
@@ -21,31 +24,45 @@ def process_line(line, pattern):
             date_aired = time_parser(time),
             artist = artist,
             advertisement = advertisement,
+            added_by = DXVLUsers.objects.get(username="kjgnaquines")
         )
+    
     return None
 
 def process_file(filename, pattern):
     processed = 0
     batch = []
     try:
-        for line in filename.read().decode('latin-1').split('\n'):
-            result = process_line(line, pattern)
-            if result:
-                batch.append(result)
-                if len(batch) >= BATCH_SIZE:
-                    create_bulk_query(DXVLLogs.objects,batch)
-                    processed += len(batch)
-                    batch = []
-        if batch:
-            create_bulk_query(DXVLLogs.objects,batch)
-            processed += len(batch)
+
+        if check_filename(filename):
+            return 'file_exists'
+        else:
+            for line in filename.read().decode('latin-1').split('\n'):
+                result = process_line(line, pattern)
+                if result:
+                    batch.append(result)
+                    if len(batch) >= BATCH_SIZE:
+                        create_bulk_query(DXVLLogs.objects,batch)
+                        processed += len(batch)
+                        add_object(DXVLLogNames.objects, file_name=filename,file_state=True,file_lines=processed)
+                        batch = []
+                        return 'success'
+
+            if batch:
+                create_bulk_query(DXVLLogs.objects,batch)
+                processed += len(batch)
+                add_object(DXVLLogNames.objects, file_name=filename,file_state=True,file_lines=processed)
+                return 'success'
+            
     except Exception as e:
-        print(f"Error processing {filename}: {e}")
+        return 'file_error'
 
 def parse_dxvl_logs(log_files):
     log_pattern = PATTERN
+
     with ThreadPoolExecutor(max_workers=12) as executor:
         futures = [executor.submit(process_file, file, log_pattern) for key, file in log_files]
         for future in futures:
-            future.result()
-    return HttpResponse("DXVL logs parsed successfully")
+            result = future.result()
+            return result
+    
