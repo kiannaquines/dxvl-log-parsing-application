@@ -23,45 +23,29 @@
                         <thead>
                             <tr>
                                 <th>Username</th>
-                                <th>Artist</th>
-                                <th>Date Aired</th>
-                                <th>Remarks</th>
-                                <th>Status</th>
+                                <th>Email</th>
+                                <th>Firstname</th>
+                                <th>Lastname</th>
+                                <th>Data Joined</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for user in users %}
+                            {% for user in users_list %}
                             <tr>
-                                <td>{{ dxvl_log.advertisement }}</td>
                                 <td>
                                     <span class="fw-medium">
-                                        {{ dxvl_log.artist }}
+                                        {{ user.username }}
                                     </span>
                                 </td>
+                                <td>{{ user.email }}</td>
                                 <td>
-                                    {{ dxvl_log.date_aired }}
+                                    {{ user.first_name }}
                                 </td>
                                 <td>
-                                    {% if dxvl_log.remarks == True %}
-                                    <span class="badge bg-label-primary me-1">
-                                        Aired
-                                    </span>
-                                    {% else %}
-                                    <span class="badge bg-label-danger me-1">
-                                        Unaired
-                                    </span>
-                                    {% endif %}
+                                    {{ user.last_name }}
                                 </td>
                                 <td>
-                                    {% if dxvl_log.status == True %}
-                                    <span class="badge bg-label-primary me-1">
-                                        Active
-                                    </span>
-                                    {% else %}
-                                    <span class="badge bg-label-danger me-1">
-                                        Inactive
-                                    </span>
-                                    {% endif %}
+                                    {{ user.date_joined }}
                                 </td>
                             </tr>
                             {% endfor %}
