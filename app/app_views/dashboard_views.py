@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from app.models import DXVLLogs,DXVLUsers
-from app.commons.common_services import all_objects_only_with_order,count_objects,filter_objects_count,all_objects
+from app.commons.common_services import all_objects_only_with_order_limit,count_objects,filter_objects_count
 from app.utils.utilities import get_current_week, get_last_week_time
 
 def dashboard_page_view(request):
@@ -15,7 +15,7 @@ def dashboard_page_view(request):
     result_total_logs = count_objects(DXVLLogs.objects)
     result_users = count_objects(DXVLUsers.objects)
     # Logs
-    dxvl_logs = all_objects_only_with_order(DXVLLogs.objects, "date_aired", "artist", "advertisement","status",limit=30)
+    dxvl_logs = all_objects_only_with_order_limit(DXVLLogs.objects, "date_aired", "artist", "advertisement","status",limit=30)
 
     context["dxvl_logs"] = dxvl_logs
     context["total_logs"] = f"{result_total_logs:,}"
