@@ -37,7 +37,13 @@
                                     </div>
                                 </div>
                                 <div class="flex-grow-1">
-                                    <span class="fw-medium d-block">Shela Mae Bernabe</span>
+                                    <span class="fw-medium d-block">
+                                        {% if request.user.first_name == "" and request.user.last_name == "" %}
+                                            {{ request.user.username }}
+                                        {% else %}
+                                            {{ request.user.first_name }} {{ request.user.last_name }}
+                                        {% endif %}
+                                    </span>
                                     <small class="text-muted">Admin</small>
                                 </div>
                             </div>

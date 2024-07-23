@@ -10,7 +10,7 @@ from app.models import DXVLLogs
 def parse_logs_view(request):
     if request.method == "POST":
         files = request.FILES.items()
-        result = parse_dxvl_logs(files)
+        result = parse_dxvl_logs(user=request.user.username,log_files=files)
 
         if result == 'file_exists':
 

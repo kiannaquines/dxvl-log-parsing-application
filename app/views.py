@@ -12,16 +12,31 @@ def login_page_view(request):
     context = {}
     form = LoginForm()
     if request.method == 'POST':
-        pass
+        login_form = LoginForm(request.POST)
+
+        if login_form.is_valid():
+            user = authenticate(username=login_form.cleaned_data['username'], password=login_form.cleaned_data['password'])
+            if user is not None:
+                login(request, user)
+                return redirect(reverse_lazy('dashboard'))
+            else:
+                print(login_form.errors)
+
     context['login_form'] = form
     return render(request, 'login.html',context)
 
 @already_loggedin
 def register_page_view(request):
     context = {}
-    form = RegisterUserForm(request.POST)
+    form = RegisterUserForm()
     if request.method == 'POST':
-        pass
+        register_form = RegisterUserForm(request.POST)
+
+        if register_form.is_valid():
+            register_form.save()
+            return redirect(reverse_lazy('login'))
+        else:
+            print(register_form.errors)
     context['register_form'] = form
     return render(request, 'register.html',context)
 
