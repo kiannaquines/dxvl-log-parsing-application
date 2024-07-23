@@ -1,8 +1,7 @@
 from django.shortcuts import render
 from app.models import DXVLLogs,DXVLUsers
 from app.commons.common_services import all_objects_only_with_order,count_objects,filter_objects_count,all_objects
-from datetime import datetime, timedelta
-from app.utils.utilities import get_current_week, get_current_time, get_last_week_time
+from app.utils.utilities import get_current_week, get_last_week_time
 
 def dashboard_page_view(request):
     context = {}
