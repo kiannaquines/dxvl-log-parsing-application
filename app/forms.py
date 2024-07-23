@@ -1,6 +1,7 @@
 from django.forms import ModelForm
 from django.contrib.auth.forms import UserCreationForm
 from app.models import DXVLUsers
+from django import forms
 
 class RegisterUserForm(UserCreationForm):
     def __init__(self,*args,**kwargs):
@@ -10,13 +11,16 @@ class RegisterUserForm(UserCreationForm):
        self.fields['password2'].label = 'Confirm Password'
 
        self.fields['username'].widget.attrs.update({'class': 'form-control','placeholder': 'Username'})
-       self.fields['password1'].widget.attrs.update({'class': 'form-control','placeholder': 'Password'})
+       self.fields['password1'].widget.attrs.update({'class': 'form-control','placeholder': 'Password','aria-describedby':'password'})
        self.fields['password2'].widget.attrs.update({'class': 'form-control','placeholder': 'Confirm Password'})
 
     class Meta:
         model = DXVLUsers
         fields = ['username', 'password1', 'password2']
 
+class LoginForm(forms.Form):
+    username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Username'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password'}))
 
 class EditUserForm(ModelForm):
     def __init__(self,*args,**kwargs):

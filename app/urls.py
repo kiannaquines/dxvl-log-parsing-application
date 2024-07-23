@@ -9,6 +9,7 @@ urlpatterns = [
     # Auth routes
     path('',login_page_view,name="login"),
     path('register/',register_page_view,name="register"),
+    path('user/signout',signout,name="signout"),
 
     # Dashboard routes
     path('dashboard/',dashboard_page_view,name="dashboard"),
