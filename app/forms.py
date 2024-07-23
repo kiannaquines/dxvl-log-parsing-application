@@ -9,6 +9,10 @@ class RegisterUserForm(UserCreationForm):
        self.fields['password1'].label = 'Password'
        self.fields['password2'].label = 'Confirm Password'
 
+       self.fields['username'].widget.attrs.update({'class': 'form-control','placeholder': 'Username'})
+       self.fields['password1'].widget.attrs.update({'class': 'form-control','placeholder': 'Password'})
+       self.fields['password2'].widget.attrs.update({'class': 'form-control','placeholder': 'Confirm Password'})
+
     class Meta:
         model = DXVLUsers
         fields = ['username', 'password1', 'password2']

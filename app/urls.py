@@ -21,6 +21,7 @@ urlpatterns = [
 
     # User routes
     path('dashbboard/users/',users,name="users"),
+    path('dashboard/users/new/',NewUserView.as_view(),name="new_user"),
     path('dashboard/users/<int:pk>/edit/',EditUserView.as_view(),name="edit_user"),
     path('dashboard/users/<int:pk>/delete/',DeleteUserView.as_view(),name="delete_user"),
     

@@ -1,0 +1,47 @@
+{% extends "./../includes/base.html" %}
+{% load static %}
+{% block title %}Add User Information{% endblock title %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'assets/vendor/libs/apex-charts/apex-charts.css' %}">
+{% endblock page_css %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 col-lg-12 order-2 order-md-3 order-lg-2 mb-4">
+        <div class="card">
+            <div class="row row-bordered g-0">
+                <div class="card-header m-0 me-2 pb-3"> 
+                    <h5>Add new user information</h5>
+                    <span class="text-muted">Add your new record</span>
+                </div>
+                <div class="card-body">
+                    <div class="col-md-12">
+                        <form method="post">
+                            {% csrf_token %}
+                            {% for input in add_form %}
+                                <div class="row">
+                                    <div class="form-group mb-3">
+                                        <label for="{{ input.id_for_label }}" class="form-label">{{ input.label }}</label>
+                                        {{ input }}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            <div class="form-group">
+                                <input type="submit" class="btn btn-primary" value="Save new data">
+                                <input type="button" onclick="back()" class="btn btn-default" value="Back">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+
+{% block page_js %}
+<script src="{% static 'assets/vendor/libs/apex-charts/apexcharts.js' %}"></script>
+<script src="{% static 'assets/js/dashboards-analytics.js' %}"></script>
+{% endblock page_js %}

@@ -13,9 +13,12 @@
     <div class="col-12 col-lg-12 order-2 order-md-3 order-lg-2 mb-4">
         <div class="card">
             <div class="card">
-                <div class="card-header remove-padding-bottom">
-                    <h5>DXVL Users Account</h5>
-                    <span class="text-muted">List of users accounts in the system.</span>
+                <div class="card-header d-flex justify-content-between align-items-start remove-padding-bottom">
+                    <div>
+                        <h5>DXVL Users Account</h5>
+                        <span class="text-muted">List of users accounts in the system.</span>
+                    </div>
+                    <a href="{% url 'new_user' %}" class="btn btn-primary">Add User</a>
                 </div>
                 <div class="table-responsive text-nowrap">
                     <table class="table" id="MydataTable">
