@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse,HttpResponse
 from django.contrib.auth.decorators import login_required
 from app.commons.logs_services import *
-from app.commons.common_services import all_objects_only,all_objects_only_with_order
+from app.commons.common_services import all_objects_only,all_objects_only_with_order,pagination
 from django.urls import reverse_lazy
 from app.models import DXVLLogs
 from django.core.paginator import Paginator
@@ -51,39 +51,31 @@ def advertisement_pricing(request):
     return render(request,"pricing.html")
 
 def dxvl_logs_view(request):
-    context = {}
+    context   = {}
     dxvl_logs = all_objects_only_with_order(DXVLLogs.objects,'date_aired','artist','advertisement','status','date_added')
-    paginator = Paginator(dxvl_logs, 50)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    page_obj  = pagination(dxvl_logs,request.GET.get('page'),50)
     context['page_object'] = page_obj
     return render(request, 'dxvl_logs.html',context)
 
 
 def dxvl_daily_report_view(request):
-    context = {}
+    context   = {}
     dxvl_logs = all_objects_only(DXVLLogs.objects,'date_aired','artist','advertisement','status','date_added')
-    paginator = Paginator(dxvl_logs, 50)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    page_obj  = pagination(dxvl_logs,request.GET.get('page'),50)
     context['page_object'] = page_obj
     return render(request, 'daily.html',context)
 
 def dxvl_weekly_report_view(request):
-    context = {}
+    context   = {}
     dxvl_logs = all_objects_only(DXVLLogs.objects,'date_aired','artist','advertisement','status','date_added')
-    paginator = Paginator(dxvl_logs, 50)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    page_obj  = pagination(dxvl_logs,request.GET.get('page'),50)
     context['page_object'] = page_obj
     return render(request, 'weekly.html',context)
 
 def dxvl_monthly_report_view(request):
-    context = {}
+    context   = {}
     dxvl_logs = all_objects_only(DXVLLogs.objects,'date_aired','artist','advertisement','status','date_added')
-    paginator = Paginator(dxvl_logs, 50)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    page_obj  = pagination(dxvl_logs,request.GET.get('page'),50)
     context['page_object'] = page_obj
     return render(request, 'monthly.html',context)
 
