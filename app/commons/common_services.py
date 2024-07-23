@@ -4,9 +4,8 @@ def all_objects(object):
 def all_objects_only(object,*fields):
     return object.only(*fields)
 
-def all_objects_only_number(object,*fields,number):
-    return object.only(*fields).order_by('date_aired')[:number]
-
+def all_objects_only_with_order(object,*fields,limit):
+    return object.only(*fields).order_by('date_aired')[:limit]
 
 def filter_objects_exist(object, **kwargs):
     return object.filter(**kwargs).exists()
