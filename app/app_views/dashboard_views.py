@@ -14,8 +14,9 @@ def dashboard_page_view(request):
     result_logs_last_week = filter_objects_count(DXVLLogs.objects, date_aired__gte=last_week_date)
     result_total_logs = count_objects(DXVLLogs.objects)
     result_users = count_objects(DXVLUsers.objects)
+    
     # Logs
-    dxvl_logs = all_objects_only_with_order_limit(DXVLLogs.objects, "date_aired", "artist", "advertisement","status",limit=30)
+    dxvl_logs = all_objects_only_with_order_limit(DXVLLogs.objects, "date_aired", "artist", "advertisement","status","date_aired",limit=30)
 
     context["dxvl_logs"] = dxvl_logs
     context["total_logs"] = f"{result_total_logs:,}"
