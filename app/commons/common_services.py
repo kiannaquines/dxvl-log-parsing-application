@@ -13,6 +13,9 @@ def filter_objects_exist(object, **kwargs):
 def filter_objects(object, **kwargs):
     return object.filter(**kwargs)
 
+def filter_objects_count(object, **kwargs):
+    return object.filter(**kwargs).count()
+
 def order_objects(object, **kwargs):
     return object.order_by(**kwargs)
 
@@ -24,3 +27,6 @@ def add_object(object, **kwargs):
 
 def create_bulk_query(object, batch):
     return object.bulk_create(batch)
+
+def count_objects(object):
+    return object.count()
