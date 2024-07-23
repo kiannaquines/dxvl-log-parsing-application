@@ -48,14 +48,32 @@
     <script src="{% static 'assets/js/datatables.min.js' %}"></script>
     <script src="{% static 'assets/js/sidebar-filter.js' %}"></script>
     <script>
+
+        function back(){
+            window.history.back()
+        }
+
         $(function(){
             $('#MydataTable').DataTable({
                 pageLength: 50,
                 paging: false,
-                lengthChange: false
+                lengthChange: false,
+                columnDefs: [
+                    {
+                        orderable: false,
+                        render: DataTable.render.select(),
+                        targets: 0
+                    }
+                ],
+                order: [[1, 'asc']],
+                select: {
+                    style: 'os',
+                    selector: 'td:first-child'
+                },
             })
             $("#MydataTable_wrapper").children().first().addClass("m-3")
             $("#MydataTable_wrapper").children().last().addClass("m-3")
+            $(".dt-select-checkbox").addClass("form-check-input")
             $("#dt-search-0").removeClass("form-control-sm")
             $("#dt-search-0").addClass("form-control-md")
         })

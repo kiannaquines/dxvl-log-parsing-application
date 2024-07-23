@@ -21,7 +21,9 @@ urlpatterns = [
 
     # User routes
     path('dashbboard/users/',users,name="users"),
-
+    path('dashboard/users/<int:pk>/edit/',EditUserView.as_view(),name="edit_user"),
+    path('dashboard/users/<int:pk>/delete/',DeleteUserView.as_view(),name="delete_user"),
+    
     # Parse logs routes
     path('dashboard/advertisement/logs/uploads/upload',parse_logs_view,name="parse_logs_view"),
 ]

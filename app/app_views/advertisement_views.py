@@ -1,11 +1,10 @@
 from django.shortcuts import render
-from django.http import JsonResponse,HttpResponse
+from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from app.commons.logs_services import *
 from app.commons.common_services import all_objects_only,all_objects_only_with_order,pagination
 from django.urls import reverse_lazy
 from app.models import DXVLLogs
-from django.core.paginator import Paginator
 
 @login_required(login_url=reverse_lazy('login'))
 def parse_logs_view(request):
@@ -47,9 +46,11 @@ def parse_logs_view(request):
 def upload_advertisement_logs(request):
     return render(request,"upload.html")
 
+@login_required(login_url=reverse_lazy('login'))
 def advertisement_pricing(request):
     return render(request,"pricing.html")
 
+@login_required(login_url=reverse_lazy('login'))
 def dxvl_logs_view(request):
     context   = {}
     dxvl_logs = all_objects_only_with_order(DXVLLogs.objects,'date_aired','artist','advertisement','status','date_added')
@@ -58,6 +59,7 @@ def dxvl_logs_view(request):
     return render(request, 'dxvl_logs.html',context)
 
 
+@login_required(login_url=reverse_lazy('login'))
 def dxvl_daily_report_view(request):
     context   = {}
     dxvl_logs = all_objects_only(DXVLLogs.objects,'date_aired','artist','advertisement','status','date_added')
@@ -65,6 +67,7 @@ def dxvl_daily_report_view(request):
     context['page_object'] = page_obj
     return render(request, 'daily.html',context)
 
+@login_required(login_url=reverse_lazy('login'))
 def dxvl_weekly_report_view(request):
     context   = {}
     dxvl_logs = all_objects_only(DXVLLogs.objects,'date_aired','artist','advertisement','status','date_added')
@@ -72,6 +75,7 @@ def dxvl_weekly_report_view(request):
     context['page_object'] = page_obj
     return render(request, 'weekly.html',context)
 
+@login_required(login_url=reverse_lazy('login'))
 def dxvl_monthly_report_view(request):
     context   = {}
     dxvl_logs = all_objects_only(DXVLLogs.objects,'date_aired','artist','advertisement','status','date_added')

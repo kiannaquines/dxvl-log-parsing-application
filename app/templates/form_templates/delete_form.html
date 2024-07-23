@@ -1,0 +1,39 @@
+{% extends "./../includes/base.html" %}
+{% load static %}
+{% block title %}Remove User Information{% endblock title %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'assets/vendor/libs/apex-charts/apex-charts.css' %}">
+{% endblock page_css %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 col-lg-12 order-2 order-md-3 order-lg-2 mb-4">
+        <div class="card">
+            <div class="row row-bordered g-0">
+                <div class="card-header m-0 me-2 pb-3"> 
+                    <h5>Delete user with username "{{ object.username }}"</h5>
+                </div>
+                <div class="card-body">
+                    <div class="col-md-12">
+                        <form method="post">
+                            {% csrf_token %}
+                            <p>Are you sure you want to remove this existing information "{{ object }}"?</p>
+                            <div class="form-group">
+                                <input type="submit" class="btn btn-danger" value="Yes, Remove">
+                                <input type="button" onclick="back()" class="btn btn-default" value="No Back">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+
+{% block page_js %}
+<script src="{% static 'assets/vendor/libs/apex-charts/apexcharts.js' %}"></script>
+<script src="{% static 'assets/js/dashboards-analytics.js' %}"></script>
+{% endblock page_js %}

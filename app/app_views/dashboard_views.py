@@ -2,7 +2,10 @@ from django.shortcuts import render
 from app.models import DXVLLogs,DXVLUsers
 from app.commons.common_services import all_objects_only_with_order_limit,count_objects,filter_objects_count
 from app.utils.utilities import get_current_week, get_last_week_time
+from django.contrib.auth.decorators import login_required
+from django.urls import reverse_lazy
 
+@login_required(login_url=reverse_lazy('login'))
 def dashboard_page_view(request):
     context = {}
 
