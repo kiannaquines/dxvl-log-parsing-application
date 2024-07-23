@@ -4,7 +4,7 @@ def all_objects(object):
     return object.all()
 
 def all_objects_only(object,*fields):
-    return object.only(*fields)
+    return object.only(*fields).order_by('-date_aired')
 
 def all_objects_only_with_order_limit(object,*fields,limit):
     return object.only(*fields).order_by('-date_aired')[:limit]
