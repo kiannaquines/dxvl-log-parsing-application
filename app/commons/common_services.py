@@ -36,7 +36,6 @@ def create_bulk_query(object, batch):
 def count_objects(object):
     return object.count()
 
-
 def pagination(queryset, page_number, per_page):
     paginator = Paginator(queryset, per_page)
     page_obj = paginator.get_page(page_number)
