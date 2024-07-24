@@ -65,4 +65,4 @@ def parse_dxvl_logs(user,log_files):
         for future in futures:
             result = future.result()
             return result
-    
+

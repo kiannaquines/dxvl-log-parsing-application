@@ -15,7 +15,7 @@
                 <h5>Export Daily Logs Options</h5>
                 <span class="text-muted">Export your data using the options below.</span>
             </div>
-            <form method="get">
+            <form action="{% url 'daily_report_generate' %}" method="get">
                 <div class="m-4">
                     <div class="col">
                         <div class="row">

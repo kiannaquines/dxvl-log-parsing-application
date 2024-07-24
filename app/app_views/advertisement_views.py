@@ -5,6 +5,8 @@ from app.commons.logs_services import *
 from app.commons.common_services import all_objects_only,all_objects_only_with_order,pagination
 from django.urls import reverse_lazy
 from app.models import DXVLLogs
+from django.http import HttpResponseBadRequest
+from app.commons.generate_report_services import generate_monthly_report, generate_weekly_report, generate_daily_report
 
 @login_required(login_url=reverse_lazy('login'))
 def parse_logs_view(request):
@@ -83,3 +85,23 @@ def dxvl_monthly_report_view(request):
     context['page_object'] = page_obj
     return render(request, 'monthly.html',context)
 
+@login_required(login_url=reverse_lazy('login'))
+def daily_view(request):
+    if request.method == "POST":
+        result = generate_daily_report(start_date=request.POST.get('date_from'), end_date=request.POST.get('date_to'))
+
+    return HttpResponseBadRequest("Invalid request method. Only POST requests are allowed.")
+
+@login_required(login_url=reverse_lazy('login'))
+def weekly_view(request):
+    if request.method == "POST":
+        pass
+
+    return HttpResponseBadRequest("Invalid request method. Only POST requests are allowed.")
+
+@login_required(login_url=reverse_lazy('login'))
+def monthly_view(request):
+    if request.method == "POST":
+        pass
+
+    return HttpResponseBadRequest("Invalid request method. Only POST requests are allowed.")
