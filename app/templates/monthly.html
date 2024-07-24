@@ -9,37 +9,18 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-12 mb-3">
-        <div class="card">
-            <div class="card-header remove-padding-bottom">
-                <h5>Export Monthly Logs Options</h5>
-                <span class="text-muted">Export your data using the options below.</span>
-            </div>
-            <form action="{% url 'monthly_report_generate' %}" method="POST">
-                <div class="m-4">
-                    <div class="col">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <input type="month" class="form-control" id="month_from" name="month_from" value="" />
-                            </div>
-                            <div class="col-md-4">
-                                <input type="month" class="form-control" id="month_to" name="month_to" />
-                            </div>
-                            <div class="col-md-4">
-                                <button type="submit" class="btn btn-primary w-100">Export PDF</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
     <div class="col-12 col-lg-12 order-2 order-md-3 order-lg-2 mb-4">
+        {% include './includes/message_box.html' %}
         <div class="card">
             <div class="card">
                 <div class="card-header remove-padding-bottom">
-                    <h5>DXVL Aired Advertisement Logs</h5>
-                    <span class="text-muted">Your all existing logs in your database.</span>
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5>DXVL Aired Advertisement Logs</h5>
+                            <span class="text-muted">Your all existing logs in your database.</span>
+                        </div>
+                        <button data-bs-toggle="modal" data-bs-target="#generateLogsModal" class="btn btn-primary">Generate Monthly Logs</button>
+                    </div>
                 </div>
                 <div class="table-responsive text-nowrap">
                     <table class="table" id="MydataTable">
@@ -145,6 +126,7 @@
         </div>
     </div>
 </div>
+{% include './includes/generate_monthly.html' %}
 {% endblock content %}
 
 

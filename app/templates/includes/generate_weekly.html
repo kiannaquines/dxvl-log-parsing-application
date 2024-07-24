@@ -1,0 +1,20 @@
+{% extends './modal.html' %}
+
+{% block modalTitle %}Export Weekly Log Report{% endblock %}
+
+{% block modal %}
+<form action="{% url 'weekly_report_generate' %}" method="POST">
+    {% csrf_token %}
+    <div class="col">
+        <div class="row">
+            <div class="col-md-12 mb-3">
+                <label for="week_from" class="form-label">Week Form</label>
+                <input type="week" class="form-control" id="week_from" name="week_from" value="" />
+            </div>
+            <div class="col-md-12">
+                <button type="submit" class="btn btn-primary">Export PDF</button>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}

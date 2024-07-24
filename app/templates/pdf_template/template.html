@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ render_title_page }}</title>
+</head>
+    <style>
+        @frame header_frame {           
+            -pdf-frame-content: header_content;
+            left: 50pt; width: 512pt; top: 50pt; height: 40pt;
+        }
+        @frame content_frame {          
+            left: 50pt; width: 512pt; top: 90pt; height: 632pt;
+        }
+        @frame footer_frame {
+            -pdf-frame-content: footer_content;
+            left: 50pt; width: 512pt; top: 772pt; height: 20pt;
+        }
+    </style>
+<body>
+    <div id="header_content">Lyrics-R-Us</div>
+
+    <div id="content_frame">
+        {% if daily_logs %}
+            Daily Logs Need to be generated
+            {% for daily_log in daily_logs %}
+                {{ daily_log.artist }} | {{ daily_log.advertisement }} | {{ daily_log.date_aired }}
+            {% endfor %}
+        {% elif weekly_logs %}
+            Weekly Logs Need to be generated
+
+            {% for weekly_log in weekly_logs %}
+                {{ weekly_log.artist }} | {{ weekly_log.advertisement }} | {{ weekly_log.date_aired }}
+            {% endfor %}
+
+        {% else %}
+            Monthly logs need to be generated
+
+            {% for weekly_log in weekly_logs %}
+                {{ weekly_log.artist }} | {{ weekly_log.advertisement }} | {{ weekly_log.date_aired }}
+            {% endfor %}
+            
+        {% endif %}
+    </div>
+
+    <div id="footer_content">(c) - page <pdf:pagenumber> of <pdf:pagecount>
+    </div>
+</body>
+</html>

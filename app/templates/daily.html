@@ -9,37 +9,18 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-12 mb-3">
-        <div class="card">
-            <div class="card-header remove-padding-bottom">
-                <h5>Export Daily Logs Options</h5>
-                <span class="text-muted">Export your data using the options below.</span>
-            </div>
-            <form action="{% url 'daily_report_generate' %}" method="get">
-                <div class="m-4">
-                    <div class="col">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <input type="date" class="form-control" id="date_from" name="date_from" value="" />
-                            </div>
-                            <div class="col-md-4">
-                                <input type="date" class="form-control" id="date_to" name="date_to" />
-                            </div>
-                            <div class="col-md-4">
-                                <button type="submit" class="btn btn-primary w-100">Export PDF</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
     <div class="col-12 col-lg-12 order-2 order-md-3 order-lg-2 mb-4">
+        {% include './includes/message_box.html' %}
         <div class="card">
             <div class="card">
-                <div class="card-header remove-padding-bottom">
-                    <h5>DXVL Aired Advertisement Logs</h5>
-                    <span class="text-muted">Your all existing logs in your database.</span>
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5>DXVL Aired Advertisement Logs</h5>
+                            <span class="text-muted">Your all existing logs in your database.</span>
+                        </div>
+                        <button data-bs-toggle="modal" data-bs-target="#generateLogsModal" class="btn btn-primary">Generate Daily Logs</button>
+                    </div>
                 </div>
                 <div class="table-responsive text-nowrap">
                     <table class="table" id="MydataTable">
@@ -145,6 +126,7 @@
         </div>
     </div>
 </div>
+{% include './includes/generate_daily.html' %}
 {% endblock content %}
 
 
@@ -155,26 +137,16 @@
     $(document).ready(function() {
         let today = new Date();
 
-        let monthForm = today.getMonth() + 1;
-        let yearForm = today.getFullYear();
-        let dayForm = today.getDate();
-
+      
         let nextMonth = new Date(today);
         nextMonth.setMonth(today.getMonth() + 1);
         let monthTo = nextMonth.getMonth() + 1;
         let yearTo = nextMonth.getFullYear();
         let dayTo = today.getDate();
-
-        if (monthForm < 10) monthForm = '0' + monthForm;
-        if (dayForm < 10) dayForm = '0' + dayForm;
         if (monthTo < 10) monthTo = '0' + monthTo;
         if (dayTo < 10) dayTo = '0' + dayTo;
-
-        let valueFrom = `${yearForm}-${monthForm}-${dayForm}`;
         let valueTo = `${yearTo}-${monthTo}-${dayTo}`;
-
-        $('#date_from').val(valueFrom);
-        $('#date_to').val(valueTo);
+        $('#daily').val(valueTo);
     });
 </script>
 {% endblock page_js %}

@@ -1,0 +1,24 @@
+{% extends './modal.html' %}
+
+{% block modalTitle %}Export Monthly Log Report{% endblock %}
+
+{% block modal %}
+<form action="{% url 'monthly_report_generate' %}" method="POST">
+    {% csrf_token %}
+    <div class="col">
+        <div class="row">
+            <div class="col-md-12 mb-2">
+                <label for="month_from" class="form-label">Month From</label>
+                <input type="month" class="form-control" id="month_from" name="month_from" value="" />
+            </div>
+            <div class="col-md-12 mb-2">
+                <label for="month_to" class="form-label">Month to</label>
+                <input type="month" class="form-control" id="month_to" name="month_to" />
+            </div>
+            <div class="col-md-12 mt-2">
+                <button type="submit" class="btn btn-primary">Export PDF</button>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}

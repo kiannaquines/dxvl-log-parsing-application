@@ -1,0 +1,20 @@
+{% extends './modal.html' %}
+
+{% block modalTitle %}Export Daily Logs{% endblock %}
+
+{% block modal %}
+<form action="{% url 'daily_report_generate' %}" method="POST">
+    {% csrf_token %}
+    <div class="col">
+        <div class="row">
+            <div class="col-md-12 mb-3">
+                <label for="daily" class="form-label">Select Date</label>
+                <input type="date" class="form-control" id="daily" name="daily" value="" required/>
+            </div>
+            <div class="col-md-12">
+                <button type="submit" class="btn btn-primary">Export PDF</button>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
