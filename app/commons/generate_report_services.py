@@ -126,6 +126,7 @@ def generate_weekly_report(start_week, end_week):
     template_pdf = get_template("pdf_template/template.html")
     context = {}
     
+
 def generate_monthly_report(start_month, end_month):
     check_logs = filter_objects_count(DXVLLogs.objects, date_aired__gte=start_month, date_aired__lte=end_month)
 
