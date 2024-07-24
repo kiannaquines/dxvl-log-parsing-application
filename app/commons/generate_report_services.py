@@ -117,10 +117,21 @@ def generate_daily_report(date, response):
 
     return createPDF
 
-
-def generate_monthly_report(start_month, end_month):
-    pass
-
-
 def generate_weekly_report(start_week, end_week):
-    pass
+    check_logs = filter_objects_count(DXVLLogs.objects, date_aired__gte=start_week, date_aired__lte=end_week)
+
+    if check_logs == 0:
+        return "no_logs_found"
+    
+    template_pdf = get_template("pdf_template/template.html")
+    context = {}
+    
+def generate_monthly_report(start_month, end_month):
+    check_logs = filter_objects_count(DXVLLogs.objects, date_aired__gte=start_month, date_aired__lte=end_month)
+
+    if check_logs == 0:
+        return "no_logs_found"
+    
+    template_pdf = get_template("pdf_template/template.html")
+    context = {}
+
