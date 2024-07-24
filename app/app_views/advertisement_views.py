@@ -22,7 +22,6 @@ from app.commons.generate_report_services import (
 from django.contrib import messages
 from datetime import datetime
 
-
 @login_required(login_url=reverse_lazy("login"))
 def parse_logs_view(request):
     if request.method == "POST":
@@ -149,13 +148,13 @@ def daily_view(request):
     if request.method == "POST":
 
         response = HttpResponse(content_type="application/pdf")
+
         response["Content-Disposition"] = (
             f'attachment; filename="dxvl_daily_report-{datetime.now()}.pdf"'
         )
 
         result = generate_daily_report(
-            start_date=request.POST.get("date_from"),
-            end_date=request.POST.get("date_to"),
+            date=request.POST.get("daily"),
             response=response,
         )
 
@@ -163,28 +162,33 @@ def daily_view(request):
 
             messages.info(
                 request,
-                "Sorry, no logs found for the given date range.",
-                extra_tags="not_found",
+                "Sorry, no logs found from the given date.",
+                extra_tags="warning",
             )
 
             return HttpResponseRedirect(reverse_lazy("dxvl_daily_report_view"))
-        
+
         elif result == "error_in_parsing_pdf":
 
             messages.error(
                 request,
                 "An error occurred while generating the PDF report. Please try again later.",
-                extra_tags="error_generate_pdf",
+                extra_tags="danger",
             )
-            
+
             return HttpResponseRedirect(reverse_lazy("dxvl_daily_report_view"))
+
         else:
 
             return response
 
-    return HttpResponseBadRequest(
-        "Invalid request method. Only POST requests are allowed."
+    messages.error(
+        request,
+        "Invalid request method. Only POST requests are allowed.",
+        extra_tags="danger",
     )
+
+    return HttpResponseRedirect(reverse_lazy("dxvl_daily_report_view"))
 
 
 @login_required(login_url=reverse_lazy("login"))

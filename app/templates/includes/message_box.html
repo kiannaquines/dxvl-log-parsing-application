@@ -1,9 +1,27 @@
-<div class="alert alert-primary d-flex" role="alert">
-    <span class="badge badge-center rounded-pill bg-primary border-label-primary p-3 me-2">
-        <i class="bx bx-check fs-6"></i>
-    </span>
-    <div class="d-flex flex-column ps-1">
-        <h6 class="alert-heading d-flex align-items-center mb-1">Success</h6>
-        <span>{{ message }}</span>
-    </div>
-</div>
+{% if messages %}
+    {% for message in messages %}
+
+        {% if message.extra_tags == "warning" or message.extra_tags == "danger" %}
+        <div class="alert alert-{{ message.extra_tags }} d-flex" role="alert">
+            <span class="badge badge-center rounded-pill bg-{{ message.extra_tags }} border-label-{{ message.extra_tags }} p-3 me-2">
+                <i class="bx bx-x fs-6"></i>
+            </span>
+            <div class="d-flex flex-column ps-1">
+                <h6 class="alert-heading d-flex align-items-center mb-1">Ohhh snap :(</h6>
+                <span>{{ message }} </span>
+            </div>
+        </div>
+        {% elif message.extra_tags == "primary" %}
+        <div class="alert alert-{{ message.extra_tags }} d-flex" role="alert">
+            <span class="badge badge-center rounded-pill bg-{{ message.extra_tags }} border-label-{{ message.extra_tags }} p-3 me-2">
+                <i class="bx bx-x fs-6"></i>
+            </span>
+            <div class="d-flex flex-column ps-1">
+                <h6 class="alert-heading d-flex align-items-center mb-1">Congrats :)</h6>
+                <span>{{ message }} </span>
+            </div>
+        </div>
+        {% endif %}
+
+    {% endfor %}
+{% endif %}

@@ -1,50 +1,118 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ render_title_page }}</title>
-</head>
-    <style>
-        @frame header_frame {           
-            -pdf-frame-content: header_content;
-            left: 50pt; width: 512pt; top: 50pt; height: 40pt;
-        }
-        @frame content_frame {          
-            left: 50pt; width: 512pt; top: 90pt; height: 632pt;
-        }
-        @frame footer_frame {
-            -pdf-frame-content: footer_content;
-            left: 50pt; width: 512pt; top: 772pt; height: 20pt;
-        }
-    </style>
-<body>
-    <div id="header_content">Lyrics-R-Us</div>
+<html>
+    <head>
+        <style>
+            @frame header_frame {           
+                -pdf-frame-content: header_content;
+                left: 50pt; width: 512pt; top: 50pt; height: 40pt;
+            }
+            @frame content_frame {          
+                left: 50pt; width: 512pt; top: 90pt; height: 632pt;
+            }
+            @frame footer_frame {
+                -pdf-frame-content: footer_content;
+                left: 50pt; width: 512pt; top: 772pt; height: 20pt;
+            }
 
-    <div id="content_frame">
-        {% if daily_logs %}
-            Daily Logs Need to be generated
-            {% for daily_log in daily_logs %}
-                {{ daily_log.artist }} | {{ daily_log.advertisement }} | {{ daily_log.date_aired }}
-            {% endfor %}
-        {% elif weekly_logs %}
-            Weekly Logs Need to be generated
+            body{
+                font-family: Arial, sans-serif;
+                font-size: 13px;
+            }
 
-            {% for weekly_log in weekly_logs %}
-                {{ weekly_log.artist }} | {{ weekly_log.advertisement }} | {{ weekly_log.date_aired }}
-            {% endfor %}
+            #customers {
+                border-collapse: collapse;
+                width: 100%;
+            }
 
-        {% else %}
-            Monthly logs need to be generated
+            #customers thead tr th {
+                border: 1px double #fefefe;
+                padding: 4px;
+                line-height: 3px;
+                background-color: #0850a0;
+                color: #fefefe;
+            }
 
-            {% for weekly_log in weekly_logs %}
-                {{ weekly_log.artist }} | {{ weekly_log.advertisement }} | {{ weekly_log.date_aired }}
-            {% endfor %}
-            
-        {% endif %}
-    </div>
+            #customers tbody tr td {
+                border: 1px solid #efefef;
+                padding: 4px;
+            }
 
-    <div id="footer_content">(c) - page <pdf:pagenumber> of <pdf:pagecount>
-    </div>
-</body>
+            #customers tr:nth-child(even){
+                background-color: #f2f2f2;
+            }
+
+            #customers th {
+                padding-top: 12px;
+                padding-bottom: 12px;
+                text-align: left;
+                color: black;
+            }
+
+            #content_footer{
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="header_content">
+            <table width="100%" style="margin-bottom: 1rem;">
+                <tr>
+                    <td width="30%" style="vertical-align: top;">
+                        <img src="{{ logo_path }}" style="width: 170px; height: 100px;">
+                    </td>
+                    <td width="70%" style="vertical-align: top; text-align: right;">
+                        <h3 style="margin: 0; padding: 0; font-size: 25px; color:#0850a0;">DXVL - FM KOOL 94.9 mHz</h3>
+                        <p style="margin: 0; padding: 0;">DXVL New Broadcast Center (beside UICT Bldg.)</p>
+                        <p style="margin: 0; padding: 0;">USM Compound, Kabacan, Cotabato</p>
+                        <p style="margin: 0; padding: 0;">Email Address: dxvlkoolfm@gmail.com</p>
+                        <p style="margin: 0; padding: 0;">Facebook Page: www.facebook.com/usmkoolfm</p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <table style="margin-bottom: 2rem;">
+            <tbody>
+                <tr>
+                    <td style="border: 3px double #0850a0;"></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div id="content_frame">
+            <table id="customers">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Time Aired</th>
+                        <th>Artist</th>
+                        <th>Advertisement</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for daily_log in daily_logs %}
+                    <tr>
+                        <td>{{ daily_log.formatted_date }}</td>
+                        <td>{{ daily_log.formatted_time }}</td>
+                        <td>{{ daily_log.artist }}</td>
+                        <td>{{ daily_log.advertisement }}</td>
+                        <td>{{ daily_log.remarks_padded }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div id="footer_frame">
+            <div id="content_footer">
+                <h3>Effective Areas</h3>
+                <p>Kabacan, Matalam, Kidapawan City, Pres. Roxas, Antipas, Makilala, Mlang, Tuluan, Datu Paglas, Buluan, Tacurung City, Lambayong, Isulan, Datu Montawal, Pikit, Carmen, Aleosan, Midsayap, Libungan, Pigcawayan, Alamada, Banisilan, Damulog, Cotabato City, Bansalan.</p>
+            </div>
+        </div>
+
+        <div id="footer_content">
+            DXVL daily logs page <pdf:pagenumber> of <pdf:pagecount>
+        </div>
+    </body>
 </html>
