@@ -58,19 +58,8 @@
                 pageLength: 50,
                 paging: false,
                 lengthChange: false,
-                columnDefs: [
-                    {
-                        orderable: false,
-                        render: DataTable.render.select(),
-                        targets: 0
-                    }
-                ],
-                order: [[1, 'asc']],
-                select: {
-                    style: 'os',
-                    selector: 'td:first-child'
-                },
-            })
+            });
+            
             $("#MydataTable_wrapper").children().first().addClass("m-3")
             $("#MydataTable_wrapper").children().last().addClass("m-3")
             $(".dt-select-checkbox").addClass("form-check-input")
