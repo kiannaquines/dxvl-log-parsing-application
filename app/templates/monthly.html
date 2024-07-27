@@ -29,6 +29,7 @@
                             <tr>
                                 <th>Advertisement</th>
                                 <th>Artist</th>
+                                <th>No. Played</th>
                                 <th>Date Aired</th>
                                 <th>Remarks</th>
                                 <th>Status</th>
@@ -37,15 +38,14 @@
                         <tbody>
                             {% for dxvl_log in page_object %}
                             <tr>
-                                <td>{{ dxvl_log.advertisement }}</td>
+                                <td>{{ dxvl_log.advertisement|truncatechars:15 }}</td>
                                 <td>
                                     <span class="fw-medium">
-                                        {{ dxvl_log.artist }}
+                                        {{ dxvl_log.artist|truncatechars:15 }}
                                     </span>
                                 </td>
-                                <td>
-                                    {{ dxvl_log.date_aired }}
-                                </td>
+                                <td>{{ dxvl_log.ads_count }}</td>
+                                <td>{{ dxvl_log.full_date }}</td>
                                 <td>
                                     {% if dxvl_log.remarks == True %}
                                     <span class="badge bg-label-primary me-1">

@@ -101,6 +101,7 @@ def dxvl_logs_view(request):
     context["page_object"] = page_obj
     return render(request, "dxvl_logs.html", context)
 
+
 @login_required(login_url=reverse_lazy("login"))
 def dxvl_daily_report_view(request):
     context = {}
@@ -111,7 +112,7 @@ def dxvl_daily_report_view(request):
         "advertisement",
         "status",
         "date_added",
-    ).order_by('-date_aired')
+    ).order_by("-date_aired")
     page_obj = pagination(dxvl_logs, request.GET.get("page"), 50)
     context["page_object"] = page_obj
     return render(request, "daily.html", context)
@@ -133,21 +134,62 @@ def dxvl_weekly_report_view(request):
     context["page_object"] = page_obj
     return render(request, "weekly.html", context)
 
+
 @login_required(login_url=reverse_lazy("login"))
 def dxvl_monthly_report_view(request):
     context = {}
-    dxvl_logs = all_objects_only(
-        DXVLLogs.objects,
-        "date_aired",
-        "artist",
-        "advertisement",
-        "status",
-        "date_added",
-    ).order_by("-date_aired")
 
-    page_obj = pagination(dxvl_logs, request.GET.get("page"), 50)
+    from django.db.models import F, Count, Value, CharField, Case, When
+    from django.db.models.functions import (
+        ExtractDay,
+        ExtractYear,
+        TruncMonth,
+        ExtractMonth,
+        Concat,
+    )
+
+    grouped_logs = (
+        DXVLLogs.objects.annotate(trunc_month=TruncMonth("date_aired"))
+        .annotate(
+            month=ExtractMonth("trunc_month"),
+            day=ExtractDay("trunc_month"),
+            year=ExtractYear("trunc_month"),
+        )
+        .annotate(
+            month_padded=Case(
+                When(
+                    month__lt=10,
+                    then=Concat(Value("0"), F("month"), output_field=CharField()),
+                ),
+                default=F("month"),
+                output_field=CharField(),
+            ),
+            day_padded=Case(
+                When(
+                    day__lt=10,
+                    then=Concat(Value("0"), F("day"), output_field=CharField()),
+                ),
+                default=F("day"),
+                output_field=CharField(),
+            ),
+            full_date=Concat(
+                F("month_padded"),
+                Value("/"),
+                F("day_padded"),
+                Value("/"),
+                F("year"),
+                output_field=CharField(),
+            ),
+        )
+        .values("advertisement", "full_date", "artist", "status", "remarks")
+        .annotate(ads_count=Count("log_id"))
+        .order_by("advertisement")
+    )
+
+    page_obj = pagination(grouped_logs, request.GET.get("page"), 500)
     context["page_object"] = page_obj
     return render(request, "monthly.html", context)
+
 
 @login_required(login_url=reverse_lazy("login"))
 def daily_view(request):
@@ -201,7 +243,7 @@ def daily_view(request):
 def weekly_view(request):
     if request.method == "POST":
         week_data = request.POST.get("week_from")
-        result = generate_weekly_report(request=request,week=week_data)
+        result = generate_weekly_report(request=request, week=week_data)
 
         if result == "no_logs_found":
             messages.info(
@@ -222,11 +264,19 @@ def weekly_view(request):
         else:
             pdf_path = os.path.join(BASE_DIR, "media", "pdfs", result)
             if os.path.exists(pdf_path):
-                response = FileResponse(open(pdf_path, "rb"), content_type="application/pdf")
-                response["Content-Disposition"] = (f'attachment; filename="{os.path.basename(pdf_path)}"')
+                response = FileResponse(
+                    open(pdf_path, "rb"), content_type="application/pdf"
+                )
+                response["Content-Disposition"] = (
+                    f'attachment; filename="{os.path.basename(pdf_path)}"'
+                )
                 return response
             else:
-                messages.error(request,"The generated file could not be found.",extra_tags="danger")
+                messages.error(
+                    request,
+                    "The generated file could not be found.",
+                    extra_tags="danger",
+                )
                 return HttpResponseRedirect(reverse_lazy("dxvl_weekly_report_view"))
 
     messages.error(

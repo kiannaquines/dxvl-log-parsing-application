@@ -10,7 +10,6 @@ def get_current_time():
 def get_last_week_time():
     return datetime.now() - timedelta(days=7)
 
-
 def get_week_range(week_str):
     year, week = map(int, week_str.split('-W'))
     first_day_of_week = datetime.strptime(f'{year}-W{week}-1', "%Y-W%W-%w").date()
