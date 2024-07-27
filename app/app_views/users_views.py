@@ -12,7 +12,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 @login_required(login_url=reverse_lazy('login'))
 def users(request):
     context = {}
-    users_list = all_objects_only(DXVLUsers.objects,'username','email','first_name','last_name','date_joined')
+    users_list = all_objects_only(DXVLUsers.objects,'username','email','first_name','last_name','date_joined').order_by('-date_joined')
     page_obj = pagination(users_list,request.GET.get('page'),10)
     context['users_obj'] = page_obj
     return render(request,"users.html",context)
