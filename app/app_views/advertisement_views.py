@@ -21,7 +21,7 @@ from app.commons.tasks import (
 )
 from django.contrib import messages
 from datetime import datetime
-from dxvl.settings import BASE_DIR, MEDIA_ROOT, STATIC_ROOT
+from dxvl.settings import BASE_DIR
 from django.shortcuts import render
 from django.contrib import messages
 from django.http import HttpResponseRedirect, FileResponse, HttpResponse
