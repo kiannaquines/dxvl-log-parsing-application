@@ -29,7 +29,7 @@ class DXVLLogs(models.Model):
     class Meta:
         db_table = 'dxvl_aired_logs'
         verbose_name = 'DXVL Log'
-
+        
 class DXVLLogNames(models.Model):
     file_name = models.CharField(max_length=255, blank=True)
     file_lines = models.IntegerField(default=0)

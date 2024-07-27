@@ -14,13 +14,20 @@ from app.commons.common_services import (
 )
 from django.urls import reverse_lazy
 from app.models import DXVLLogs
-from app.commons.generate_report_services import (
+from app.commons.tasks import (
     generate_monthly_report,
     generate_weekly_report,
     generate_daily_report,
 )
 from django.contrib import messages
 from datetime import datetime
+from dxvl.settings import BASE_DIR, MEDIA_ROOT, STATIC_ROOT
+from django.shortcuts import render
+from django.contrib import messages
+from django.http import HttpResponseRedirect, FileResponse, HttpResponse
+from django.urls import reverse_lazy
+import os
+
 
 @login_required(login_url=reverse_lazy("login"))
 def parse_logs_view(request):
@@ -94,7 +101,6 @@ def dxvl_logs_view(request):
     context["page_object"] = page_obj
     return render(request, "dxvl_logs.html", context)
 
-
 @login_required(login_url=reverse_lazy("login"))
 def dxvl_daily_report_view(request):
     context = {}
@@ -105,7 +111,7 @@ def dxvl_daily_report_view(request):
         "advertisement",
         "status",
         "date_added",
-    )
+    ).order_by('-date_aired')
     page_obj = pagination(dxvl_logs, request.GET.get("page"), 50)
     context["page_object"] = page_obj
     return render(request, "daily.html", context)
@@ -121,11 +127,11 @@ def dxvl_weekly_report_view(request):
         "advertisement",
         "status",
         "date_added",
-    )
+    ).order_by("-date_aired")
+
     page_obj = pagination(dxvl_logs, request.GET.get("page"), 50)
     context["page_object"] = page_obj
     return render(request, "weekly.html", context)
-
 
 @login_required(login_url=reverse_lazy("login"))
 def dxvl_monthly_report_view(request):
@@ -137,11 +143,11 @@ def dxvl_monthly_report_view(request):
         "advertisement",
         "status",
         "date_added",
-    )
+    ).order_by("-date_aired")
+
     page_obj = pagination(dxvl_logs, request.GET.get("page"), 50)
     context["page_object"] = page_obj
     return render(request, "monthly.html", context)
-
 
 @login_required(login_url=reverse_lazy("login"))
 def daily_view(request):
@@ -194,11 +200,41 @@ def daily_view(request):
 @login_required(login_url=reverse_lazy("login"))
 def weekly_view(request):
     if request.method == "POST":
-        pass
+        week_data = request.POST.get("week_from")
+        result = generate_weekly_report(request=request,week=week_data)
 
-    return HttpResponseBadRequest(
-        "Invalid request method. Only POST requests are allowed."
+        if result == "no_logs_found":
+            messages.info(
+                request,
+                "Sorry, no logs found from the given date.",
+                extra_tags="warning",
+            )
+            return HttpResponseRedirect(reverse_lazy("dxvl_weekly_report_view"))
+
+        elif result == "error_in_parsing_pdf":
+            messages.error(
+                request,
+                "An error occurred while generating the PDF report. Please try again later.",
+                extra_tags="danger",
+            )
+            return HttpResponseRedirect(reverse_lazy("dxvl_weekly_report_view"))
+
+        else:
+            pdf_path = os.path.join(BASE_DIR, "media", "pdfs", result)
+            if os.path.exists(pdf_path):
+                response = FileResponse(open(pdf_path, "rb"), content_type="application/pdf")
+                response["Content-Disposition"] = (f'attachment; filename="{os.path.basename(pdf_path)}"')
+                return response
+            else:
+                messages.error(request,"The generated file could not be found.",extra_tags="danger")
+                return HttpResponseRedirect(reverse_lazy("dxvl_weekly_report_view"))
+
+    messages.error(
+        request,
+        "Invalid request method. Only POST requests are allowed.",
+        extra_tags="danger",
     )
+    return HttpResponseRedirect(reverse_lazy("dxvl_weekly_report_view"))
 
 
 @login_required(login_url=reverse_lazy("login"))

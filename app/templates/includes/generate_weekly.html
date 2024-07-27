@@ -7,7 +7,12 @@
     {% csrf_token %}
     <div class="col">
         <div class="row">
-            <div class="col-md-12 mb-3">
+            <div class="col-md-12">
+                <div class="alert alert-primary" role="alert">
+                    Please note that you need to wait while processing your report of logs since this will process all data on the week you chose.
+                </div>
+            </div>
+            <div class="col-md-12 mb-3 mt-3">
                 <label for="week_from" class="form-label">Week Form</label>
                 <input type="week" class="form-control" id="week_from" name="week_from" value="" />
             </div>

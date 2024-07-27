@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        @page {
+            size: A4;
+            margin: 50pt 50pt 50pt 50pt;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+            margin: 0;
+        }
+
+        #header_content {
+            margin-bottom: 1rem;
+        }
+
+        #header_content img {
+            width: 170px;
+            height: 100px;
+        }
+
+        #header_content h3 {
+            margin: 0;
+            padding: 0;
+            font-size: 25px;
+            color: #0850a0;
+        }
+
+        #header_content p {
+            margin: 0;
+            padding: 0;
+        }
+
+        #customers {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 2rem;
+        }
+
+        #customers thead tr th {
+            border: 1px double #fefefe;
+            padding: 4px;
+            background-color: #0850a0;
+            color: #fefefe;
+        }
+
+        #customers tbody tr td {
+            border: 1px solid #efefef;
+            padding: 4px;
+        }
+
+        #customers tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        #customers th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            color: black;
+        }
+
+        #content_footer {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+    </style>
+</head>
+<body>
+    <div id="header_content">
+        <table width="100%">
+            <tr>
+                <td width="30%" style="vertical-align: top;">
+                    <img src="{{ logo_path }}" alt="Logo">
+                </td>
+                <td width="70%" style="vertical-align: top; text-align: right;">
+                    <h3>DXVL - FM KOOL 94.9 mHz</h3>
+                    <p>DXVL New Broadcast Center (beside UICT Bldg.)</p>
+                    <p>USM Compound, Kabacan, Cotabato</p>
+                    <p>Email Address: dxvlkoolfm@gmail.com</p>
+                    <p>Facebook Page: www.facebook.com/usmkoolfm</p>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="page-break"></div>
+    
+    <div id="content_frame">
+        <table id="customers">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Time Aired</th>
+                    <th>Artist</th>
+                    <th>Advertisement</th>
+                    <th>Remarks</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if daily_logs %}
+                    {% for daily_log in daily_logs %}
+                    <tr>
+                        <td>{{ daily_log.formatted_date }}</td>
+                        <td>{{ daily_log.formatted_time }}</td>
+                        <td>{{ daily_log.artist }}</td>
+                        <td>{{ daily_log.advertisement }}</td>
+                        <td>{{ daily_log.remarks_padded }}</td>
+                    </tr>
+                    {% endfor %}
+                {% elif weekly_logs %}
+                    {% for weekly_log in weekly_logs %}
+                    <tr>
+                        <td>{{ weekly_log.formatted_date }}</td>
+                        <td>{{ weekly_log.formatted_time }}</td>
+                        <td>{{ weekly_log.artist }}</td>
+                        <td>{{ weekly_log.advertisement }}</td>
+                        <td>{{ weekly_log.remarks_padded }}</td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    {% for monthly_log in monthly_logs %}
+                    <tr>
+                        <td>{{ monthly_log.formatted_date }}</td>
+                        <td>{{ monthly_log.formatted_time }}</td>
+                        <td>{{ monthly_log.artist }}</td>
+                        <td>{{ monthly_log.advertisement }}</td>
+                        <td>{{ monthly_log.remarks_padded }}</td>
+                    </tr>
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <div id="content_footer">
+        <h3>Effective Areas</h3>
+        <p>Kabacan, Matalam, Kidapawan City, Pres. Roxas, Antipas, Makilala, Mlang, Tuluan, Datu Paglas, Buluan, Tacurung City, Lambayong, Isulan, Datu Montawal, Pikit, Carmen, Aleosan, Midsayap, Libungan, Pigcawayan, Alamada, Banisilan, Damulog, Cotabato City, Bansalan.</p>
+    </div>
+
+    <div class="page-break"></div>
+
+    <div id="footer_content" style="text-align: center; margin-top: 2rem;">
+        DXVL daily logs page <span class="page-number"></span> of <span class="page-count"></span>
+    </div>
+</body>
+</html>
