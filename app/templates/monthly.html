@@ -38,7 +38,7 @@
                         <tbody>
                             {% for dxvl_log in page_object %}
                             <tr>
-                                <td>{{ dxvl_log.advertisement|truncatechars:15 }}</td>
+                                <td>{{ dxvl_log.advertisement|truncatechars:20 }}</td>
                                 <td>
                                     <span class="fw-medium">
                                         {{ dxvl_log.artist|truncatechars:15 }}
@@ -128,31 +128,17 @@
 </div>
 {% include './includes/generate_monthly.html' %}
 {% endblock content %}
-
-
 {% block page_js %}
 <script src="{% static 'assets/vendor/libs/apex-charts/apexcharts.js' %}"></script>
 <script src="{% static 'assets/js/dashboards-analytics.js' %}"></script>
 <script>
-    $(function(){
-        $(document).ready(function() {
-            let today = new Date();
-
-            let monthForm = today.getMonth() + 1;
-            let yearForm = today.getFullYear();
-            let monthTo = today.getMonth() + 2;
-            let yearTo = today.getFullYear();
-
-            if (monthForm < 10) monthForm = '0' + monthForm;
-            if (monthTo < 10) monthTo = '0' + monthTo;
-
-            let valuemonthFrom = `${yearForm}-${monthForm}`;
-            let valuemonthTo = `${yearTo}-${monthTo}`;
-
-            $('#month_from').val(valuemonthFrom);
-            $('#month_to').val(valuemonthTo);
-
-        });
-    })
+    $(document).ready(function(){
+        $( '#advertisement_name' ).select2( {
+            theme: "bootstrap-5",
+            width: $(this).data('width') ? $(this).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+            placeholder: $( this ).data( 'placeholder' ),
+            dropdownParent: $('#generateLogsModal')
+        } );
+    });
 </script>
 {% endblock page_js %}

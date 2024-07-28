@@ -8,12 +8,20 @@
     <div class="col">
         <div class="row">
             <div class="col-md-12 mb-2">
-                <label for="month_from" class="form-label">Month From</label>
-                <input type="month" class="form-control" id="month_from" name="month_from" value="" />
+                <label for="date_to" class="form-label">Advertisement</label>
+                <select name="advertisement_name" id="advertisement_name" class="form-select" id="single-select-optgroup-field" data-placeholder="Choose one thing">
+                    <option></option>
+                    <option value="1">Ads 1</option>
+                    <option value="2">Ads 2</option>
+                </select>
             </div>
             <div class="col-md-12 mb-2">
-                <label for="month_to" class="form-label">Month to</label>
-                <input type="month" class="form-control" id="month_to" name="month_to" />
+                <label for="date_from" class="form-label">Date From</label>
+                <input type="date" class="form-control" id="date_from" name="month_from" value="" />
+            </div>
+            <div class="col-md-12 mb-2">
+                <label for="date_to" class="form-label">Date to</label>
+                <input type="date" class="form-control" id="date_to" name="date_to" />
             </div>
             <div class="col-md-12 mt-2">
                 <button type="submit" class="btn btn-primary">Export PDF</button>

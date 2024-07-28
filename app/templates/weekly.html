@@ -36,10 +36,10 @@
                         <tbody>
                             {% for dxvl_log in page_object %}
                             <tr>
-                                <td>{{ dxvl_log.advertisement }}</td>
+                                <td>{{ dxvl_log.advertisement|truncatechars:20 }}</td>
                                 <td>
                                     <span class="fw-medium">
-                                        {{ dxvl_log.artist }}
+                                        {{ dxvl_log.artist|truncatechars:20 }}
                                     </span>
                                 </td>
                                 <td>

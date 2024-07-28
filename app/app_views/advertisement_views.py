@@ -154,8 +154,7 @@ def dxvl_monthly_report_view(request):
             month=ExtractMonth("trunc_month"),
             day=ExtractDay("trunc_month"),
             year=ExtractYear("trunc_month"),
-        )
-        .annotate(
+        ).annotate(
             month_padded=Case(
                 When(
                     month__lt=10,
