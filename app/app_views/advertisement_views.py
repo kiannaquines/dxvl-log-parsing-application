@@ -148,6 +148,8 @@ def dxvl_monthly_report_view(request):
         Concat,
     )
 
+    grouped_ads = DXVLLogs.objects.values('advertisement').annotate(ads_count=Count('log_id')).values("ads_count","advertisement").order_by('-ads_count')
+
     grouped_logs = (
         DXVLLogs.objects.annotate(trunc_month=TruncMonth("date_aired"))
         .annotate(
@@ -187,6 +189,7 @@ def dxvl_monthly_report_view(request):
 
     page_obj = pagination(grouped_logs, request.GET.get("page"), 500)
     context["page_object"] = page_obj
+    context['grouped_ads'] = grouped_ads
     return render(request, "monthly.html", context)
 
 
