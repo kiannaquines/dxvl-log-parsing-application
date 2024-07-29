@@ -1,11 +1,11 @@
 import os
 from xhtml2pdf import pisa
 from app.models import DXVLLogs
-from app.commons.common_services import filter_objects_count
+from app.commons.common_services import filter_objects_count, filter_objects
 from datetime import datetime
 from dxvl.settings import BASE_DIR, MEDIA_ROOT
 from django.template.loader import get_template
-from django.db.models import F, Value, CharField, Case, When
+from django.db.models import F, Value, CharField, Case, When, Count
 from django.db.models.functions import Concat, Extract
 from app.utils.utilities import get_week_range
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -15,6 +15,7 @@ from weasyprint import HTML
 from io import BytesIO
 from datetime import datetime
 
+
 def chunk_generator(total_count, chunk_size):
     start = 0
     while start < total_count:
@@ -22,33 +23,36 @@ def chunk_generator(total_count, chunk_size):
         yield (start, end)
         start = end
 
+
 def fetch_chunk(start, end, first_day, last_day):
-    return list(DXVLLogs.objects.filter(
-        date_aired__gte=first_day, 
-        date_aired__lte=last_day
-    ).annotate(
-        formatted_date=TruncDate('date_aired'),
-        formatted_time=Concat(
-            Extract('date_aired', 'hour'),
-            Value(':'),
-            Extract('date_aired', 'minute'),
-            Value(':'),
-            Extract('date_aired', 'second'),
-            output_field=CharField()
-        ),
-        remarks_padded=Case(
-            When(remarks=True, then=Value("Aired")),
-            When(remarks=False, then=Value("Unaired")),
-            default=Value("Unknown"),
-            output_field=CharField(),
+    return list(
+        DXVLLogs.objects.filter(date_aired__gte=first_day, date_aired__lte=last_day)
+        .annotate(
+            formatted_date=TruncDate("date_aired"),
+            formatted_time=Concat(
+                Extract("date_aired", "hour"),
+                Value(":"),
+                Extract("date_aired", "minute"),
+                Value(":"),
+                Extract("date_aired", "second"),
+                output_field=CharField(),
+            ),
+            remarks_padded=Case(
+                When(remarks=True, then=Value("Aired")),
+                When(remarks=False, then=Value("Unaired")),
+                default=Value("Unknown"),
+                output_field=CharField(),
+            ),
         )
-    ).values(
-        'formatted_date',
-        'formatted_time',
-        'artist',
-        'advertisement',
-        'remarks_padded'
-    )[start:end])
+        .values(
+            "formatted_date",
+            "formatted_time",
+            "artist",
+            "advertisement",
+            "remarks_padded",
+        )[start:end]
+    )
+
 
 def generate_daily_report(date, response):
     count_check = filter_objects_count(
@@ -158,13 +162,13 @@ def generate_daily_report(date, response):
 
     return createPDF
 
+
 def generate_weekly_report(request, week):
     context = {}
     first_day_of_week, last_day_of_week = get_week_range(week)
-    
+
     total_count = DXVLLogs.objects.filter(
-        date_aired__gte=first_day_of_week,
-        date_aired__lte=last_day_of_week
+        date_aired__gte=first_day_of_week, date_aired__lte=last_day_of_week
     ).count()
 
     if total_count == 0:
@@ -175,7 +179,9 @@ def generate_weekly_report(request, week):
 
     with ThreadPoolExecutor(max_workers=13) as executor:
         future_to_chunk = {
-            executor.submit(fetch_chunk, start, end, first_day_of_week, last_day_of_week): (start, end)
+            executor.submit(
+                fetch_chunk, start, end, first_day_of_week, last_day_of_week
+            ): (start, end)
             for start, end in chunk_generator(total_count, chunk_size)
         }
 
@@ -189,7 +195,9 @@ def generate_weekly_report(request, week):
     pdf_file = BytesIO()
 
     try:
-        HTML(string=html_string,base_url=request.build_absolute_uri()).write_pdf(pdf_file)
+        HTML(string=html_string, base_url=request.build_absolute_uri()).write_pdf(
+            pdf_file
+        )
     except Exception:
         return "unexpected_error"
 
@@ -203,12 +211,61 @@ def generate_weekly_report(request, week):
 
     return filename
 
-def generate_monthly_report(start_month, end_month):
-    check_logs = filter_objects_count(
-        DXVLLogs.objects, date_aired__gte=start_month, date_aired__lte=end_month
+
+def generate_monthly_report(request):
+    context = {}
+
+    from django.utils import timezone
+    from datetime import datetime, time
+
+    date_from = request.POST.get("date_from")
+    date_to = request.POST.get("date_to")
+    advertisement = request.POST.get("advertisement")
+    
+    total_count = (
+        DXVLLogs.objects.filter(
+            date_aired__range=(date_from, date_to),
+            advertisement=advertisement,
+        ).count()
     )
 
-    if check_logs == 0:
+    if total_count == 0:
         return "no_logs_found"
+    
+    monthly_logs = (
+        DXVLLogs.objects
+        .filter(
+            advertisement=advertisement,
+            date_aired__gte=date_from,
+            date_aired__lt=date_to,
+        )
+        .values("advertisement")
+        .annotate(no_played=Count("log_id"))
+        .order_by("-no_played")
+    )
 
-    return None
+    for month_log in monthly_logs:
+        print(month_log)
+
+
+    context["monthly_logs"] = monthly_logs
+    context["generated_date"] = datetime.now().strftime("%Y-%m-%d")
+    html_string = render_to_string("pdf_template/template_monthly.html", context)
+    pdf_file = BytesIO()
+
+    try:
+        HTML(string=html_string, base_url=request.build_absolute_uri()).write_pdf(
+            pdf_file
+        )
+    except Exception:
+        return "unexpected_error"
+
+    filename = f"dxvl_monthly_report-{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
+    pdf_dir = os.path.join(MEDIA_ROOT, "pdfs")
+    os.makedirs(pdf_dir, exist_ok=True)
+    pdf_path = os.path.join(pdf_dir, filename)
+
+    with open(pdf_path, "wb") as pdf_file_out:
+        pdf_file_out.write(pdf_file.getvalue())
+
+    return filename

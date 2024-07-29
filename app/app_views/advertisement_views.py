@@ -1,3 +1,4 @@
+import os
 from django.shortcuts import render
 from django.http import (
     JsonResponse,
@@ -5,15 +6,15 @@ from django.http import (
     HttpResponseBadRequest,
     HttpResponseRedirect,
 )
-from django.contrib.auth.decorators import login_required
 from app.commons.logs_services import *
+from django.urls import reverse_lazy
+from app.models import DXVLLogs
+from django.contrib.auth.decorators import login_required
 from app.commons.common_services import (
     all_objects_only,
     all_objects_only_with_order,
     pagination,
 )
-from django.urls import reverse_lazy
-from app.models import DXVLLogs
 from app.commons.tasks import (
     generate_monthly_report,
     generate_weekly_report,
@@ -22,11 +23,16 @@ from app.commons.tasks import (
 from django.contrib import messages
 from datetime import datetime
 from dxvl.settings import BASE_DIR
-from django.shortcuts import render
-from django.contrib import messages
 from django.http import HttpResponseRedirect, FileResponse, HttpResponse
 from django.urls import reverse_lazy
-import os
+from django.db.models import F, Count, Value, CharField, Case, When
+from django.db.models.functions import (
+    ExtractDay,
+    ExtractYear,
+    TruncMonth,
+    ExtractMonth,
+    Concat,
+)
 
 
 @login_required(login_url=reverse_lazy("login"))
@@ -138,17 +144,12 @@ def dxvl_weekly_report_view(request):
 @login_required(login_url=reverse_lazy("login"))
 def dxvl_monthly_report_view(request):
     context = {}
-
-    from django.db.models import F, Count, Value, CharField, Case, When
-    from django.db.models.functions import (
-        ExtractDay,
-        ExtractYear,
-        TruncMonth,
-        ExtractMonth,
-        Concat,
+    grouped_ads = (
+        DXVLLogs.objects.values("advertisement")
+        .annotate(ads_count=Count("log_id"))
+        .values("ads_count", "advertisement")
+        .order_by("-ads_count")
     )
-
-    grouped_ads = DXVLLogs.objects.values('advertisement').annotate(ads_count=Count('log_id')).values("ads_count","advertisement").order_by('-ads_count')
 
     grouped_logs = (
         DXVLLogs.objects.annotate(trunc_month=TruncMonth("date_aired"))
@@ -156,7 +157,8 @@ def dxvl_monthly_report_view(request):
             month=ExtractMonth("trunc_month"),
             day=ExtractDay("trunc_month"),
             year=ExtractYear("trunc_month"),
-        ).annotate(
+        )
+        .annotate(
             month_padded=Case(
                 When(
                     month__lt=10,
@@ -187,9 +189,9 @@ def dxvl_monthly_report_view(request):
         .order_by("advertisement")
     )
 
-    page_obj = pagination(grouped_logs, request.GET.get("page"), 500)
+    page_obj = pagination(grouped_logs, request.GET.get("page"), 100)
     context["page_object"] = page_obj
-    context['grouped_ads'] = grouped_ads
+    context["grouped_ads"] = grouped_ads
     return render(request, "monthly.html", context)
 
 
@@ -292,7 +294,9 @@ def weekly_view(request):
 @login_required(login_url=reverse_lazy("login"))
 def monthly_view(request):
     if request.method == "POST":
-        pass
+        result = generate_monthly_report(request=request)
+        print(result)
+
 
     return HttpResponseBadRequest(
         "Invalid request method. Only POST requests are allowed."

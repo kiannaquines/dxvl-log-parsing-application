@@ -24,7 +24,7 @@ class DXVLLogs(models.Model):
     date_added = models.DateTimeField(auto_now_add=True, null=False, blank=False)
 
     def __str__(self) -> str:
-        return str(self.date_aired)
+        return str(self.advertisement)
     
     class Meta:
         db_table = 'dxvl_aired_logs'
