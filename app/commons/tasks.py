@@ -269,6 +269,7 @@ def generate_monthly_report(request):
             }
         )
 
+    context["monthly_data_logs"] = monthly_data_logs
     context["generated_date"] = datetime.now().strftime("%Y-%m-%d")
     html_string = render_to_string("pdf_template/template_monthly.html", context)
     pdf_file = BytesIO()
