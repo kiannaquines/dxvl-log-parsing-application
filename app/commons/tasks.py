@@ -5,11 +5,11 @@ from app.commons.common_services import filter_objects_count, filter_objects
 from datetime import datetime
 from dxvl.settings import BASE_DIR, MEDIA_ROOT
 from django.template.loader import get_template
-from django.db.models import F, Value, CharField, Case, When, Count
+from django.db.models import F, Value, CharField, Case, When, Count, Min, Max
 from django.db.models.functions import Concat, Extract, Lower
 from app.utils.utilities import get_week_range
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from django.db.models.functions import TruncDate
+from django.db.models.functions import TruncDate, TruncTime
 from django.template.loader import render_to_string
 from weasyprint import HTML
 from io import BytesIO
@@ -220,7 +220,7 @@ def generate_monthly_report(request):
 
     date_from_str = request.POST.get("date_from")
     date_to_str = request.POST.get("date_to")
-    advertisement_str = request.POST.get("advertisement_name","").strip()
+    advertisement_str = request.POST.get("advertisement_name", "").strip()
 
     datetime_from = timezone.make_aware(datetime.strptime(date_from_str, "%Y-%m-%d"))
     datetime_to = timezone.make_aware(datetime.strptime(date_to_str, "%Y-%m-%d"))
@@ -236,29 +236,56 @@ def generate_monthly_report(request):
 
     grouped_by_date = (
         DXVLLogs.objects.filter(
-            date_aired__range=range_date,
-            advertisement__icontains=advertisement_str
+            date_aired__range=range_date, advertisement__icontains=advertisement_str
         )
         .annotate(grouped_date=TruncDate("date_aired"))
-        .values("grouped_date", "advertisement","remarks")
+        .values("grouped_date", "advertisement", "remarks")
         .annotate(no_played=Count("log_id"))
         .order_by("grouped_date")
     )
 
-    final_data = []
+    monthly_data_logs = [
+        {
+            "grouped_data": "date",
+            "advertisement": "ads_name",
+            "data": {
+                "time1": "5:56 am",
+                "time2": "5:57 am",
+                "time3": "5:58 am",
+            },
+            "remarks": "Aired",
+         }
+    ]
 
-    for data in grouped_by_date:
-        log = DXVLLogs.objects.filter(
-            advertisement=data['advertisement'],
-            date_aired__date=data['grouped_date'],
-            remarks=data['remarks'],
+    for grouped_data in grouped_by_date:
+        print("==========",grouped_data["grouped_date"],"==========")
+
+        individual_logs_per_group = (
+            DXVLLogs.objects.filter(
+                date_aired__date=grouped_data["grouped_date"],
+                advertisement__icontains=grouped_data["advertisement"],
+                remarks=grouped_data["remarks"],
+            ).annotate(
+                time=TruncTime('date_aired'),
+            )
         )
 
-        final_data.append(log)
+        # monthly_data_logs.append(
+        #     {
+        #         "grouped_data": grouped_data["grouped_date"].strftime("%Y-%m-%d"),
+        #         "advertisement": grouped_data["advertisement"],
+        #         "data": spot,
+        #         "remarks": grouped_data["remarks"],
+        #     }
+        # )
 
-    print("==============================") 
-    print(final_data)
-    print("==============================")
+        for individual_log in individual_logs_per_group:
+            print(individual_log.advertisement)
+            print(individual_log.time)
+            print(individual_log.remarks)
+
+        print("==========",grouped_data["grouped_date"],"==========")
+
 
     context["generated_date"] = datetime.now().strftime("%Y-%m-%d")
     html_string = render_to_string("pdf_template/template_monthly.html", context)
