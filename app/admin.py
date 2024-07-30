@@ -44,3 +44,6 @@ class DXVLAdvertisementPricesAdmin(admin.ModelAdmin):
 admin.site.register(DXVLLogs, DXVLLogsAdmin)
 admin.site.register(DXVLUsers, DXVLUsersAdmin)
 admin.site.register(DXVLLogNames, DXVLLogNamesAdmin)
+
+
+admin.site.register(Advertisements)

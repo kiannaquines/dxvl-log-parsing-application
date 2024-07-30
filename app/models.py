@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from uuid import uuid4
 
 class DXVLUsers(AbstractUser):
     user_address = models.TextField(max_length=255, blank=True,null=True)
@@ -29,6 +30,7 @@ class DXVLLogs(models.Model):
     class Meta:
         db_table = 'dxvl_aired_logs'
         verbose_name = 'DXVL Log'
+        ordering = ['advertisement', 'date_aired']
         
 class DXVLLogNames(models.Model):
     file_name = models.CharField(max_length=255, blank=True)
@@ -41,6 +43,13 @@ class DXVLLogNames(models.Model):
     class Meta:
         db_table = 'dxvl_log_filenames'
         verbose_name = 'DXVL Log File Name'
+
+class Advertisements(models.Model):
+    advertisement_id = models.AutoField(primary_key=True,unique=True, editable=False)
+    advertisement_name = models.ForeignKey(DXVLLogs, on_delete=models.SET_NULL,null=True,blank=True)
+    
+    def __str__(self) -> str:
+        return f'Advertisement: {self.advertisement_name}'
 
 class DXVLAdvertisementPrices(models.Model):
     price = models.FloatField()

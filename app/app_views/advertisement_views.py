@@ -302,7 +302,7 @@ def monthly_view(request):
             messages.info(
                 request,
                 "Sorry, no logs found from the given date.",
-                extra_tags="warning",
+                extra_tags="danger",
             )
             return HttpResponseRedirect(reverse_lazy("dxvl_monthly_report_view"))
         else:

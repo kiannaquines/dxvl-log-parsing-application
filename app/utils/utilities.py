@@ -14,6 +14,6 @@ def get_last_week_time():
 
 def get_week_range(week_str):
     year, week = map(int, week_str.split('-W'))
-    first_day_of_week = timezone.make_aware(datetime.strptime(f'{year}-W{week}-1', "%Y-W%W-%w").date())
-    last_day_of_week = timezone.make_aware(first_day_of_week + timedelta(days=6))
+    first_day_of_week = datetime.strptime(f'{year}-W{week}-1', "%Y-W%W-%w").date()
+    last_day_of_week = first_day_of_week + timedelta(days=6)
     return first_day_of_week, last_day_of_week

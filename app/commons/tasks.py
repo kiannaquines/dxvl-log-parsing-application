@@ -220,52 +220,54 @@ def generate_monthly_report(request):
 
     date_from_str = request.POST.get("date_from")
     date_to_str = request.POST.get("date_to")
-    advertisement_str = request.POST.get("advertisement_name")
+    advertisement_str = request.POST.get("advertisement_name","").strip()
 
     datetime_from = timezone.make_aware(datetime.strptime(date_from_str, "%Y-%m-%d"))
     datetime_to = timezone.make_aware(datetime.strptime(date_to_str, "%Y-%m-%d"))
+    range_date = (datetime_from, datetime_to)
 
-    total_count = DXVLLogs.objects.annotate(lowered_name=Lower("advertisement")).filter(
-        lowered_name__icontains=f"{advertisement_str}",
-        date_aired__range=(
-            datetime_from,
-            datetime_to,
-        ),
+    total_count = DXVLLogs.objects.filter(
+        advertisement__icontains=advertisement_str,
+        date_aired__range=range_date,
     )
-    
-    if total_count == 0:
+
+    if total_count.count() == 0:
         return "no_logs_found"
 
-    monthly_logs = (
-        DXVLLogs.objects.
-        values("date_aired")
-        .annotate(
-            lowered_adname=Lower("advertisement"),
-            converted_date=TruncDate('date_aired'),
+    grouped_by_date = (
+        DXVLLogs.objects.filter(
+            date_aired__range=range_date,
+            advertisement__icontains=advertisement_str
         )
-        .filter(
-            lowered_adname__icontains=advertisement_str,
-            date_aired__range=(datetime_from, datetime_to),
-        )
+        .annotate(grouped_date=TruncDate("date_aired"))
+        .values("grouped_date", "advertisement","remarks")
         .annotate(no_played=Count("log_id"))
-        .values(
-            "log_id",
-            "advertisement",
-            "converted_date"
-        )
+        .order_by("grouped_date")
     )
-    print("===========Monthly Logs==============")
-    for log in monthly_logs:
-        print(log.advertisement, log.converted_date, log.no_played)
-    print("===========Monthly Logs==============")
 
-    context["monthly_logs"] = monthly_logs
+    final_data = []
+
+    for data in grouped_by_date:
+        log = DXVLLogs.objects.filter(
+            advertisement=data['advertisement'],
+            date_aired__date=data['grouped_date'],
+            remarks=data['remarks'],
+        )
+
+        final_data.append(log)
+
+    print("==============================") 
+    print(final_data)
+    print("==============================")
+
     context["generated_date"] = datetime.now().strftime("%Y-%m-%d")
     html_string = render_to_string("pdf_template/template_monthly.html", context)
     pdf_file = BytesIO()
 
     try:
-        HTML(string=html_string, base_url=request.build_absolute_uri()).write_pdf(pdf_file)
+        HTML(string=html_string, base_url=request.build_absolute_uri()).write_pdf(
+            pdf_file
+        )
     except Exception:
         return "unexpected_error"
 
