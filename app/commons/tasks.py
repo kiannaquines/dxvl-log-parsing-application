@@ -264,7 +264,7 @@ def generate_monthly_report(request):
             {
                 "grouped_data": grouped_data["grouped_date"].strftime("%Y-%m-%d"),
                 "advertisement": grouped_data["advertisement"],
-                "data": time_data,
+                "spots": time_data,
                 "remarks": grouped_data["remarks"],
             }
         )
