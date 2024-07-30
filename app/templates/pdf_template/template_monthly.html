@@ -103,9 +103,9 @@
                 <tr>
                     <th>Date</th>
                     <th>Time Aired</th>
-                    <th>Artist</th>
-                    <th>Advertisement</th>
-                    <th>Remarks</th>
+                    {% for count in no_played %}
+                    <th>Spot {{ count }}</th>
+                    {% endfor %}
                 </tr>
             </thead>
             <tbody>

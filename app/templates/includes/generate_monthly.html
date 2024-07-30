@@ -9,10 +9,10 @@
         <div class="row">
             <div class="col-md-12 mb-2">
                 <label for="date_to" class="form-label">Advertisement</label>
-                <select name="advertisement_name" id="advertisement_name" class="form-select" id="single-select-optgroup-field" data-placeholder="Choose one thing">
+                <select name="advertisement_name" id="advertisement_name" class="form-select" data-placeholder="Choose one thing">
                     <option></option>
                     {% for grouped_ad in grouped_ads %}
-                    <option value="{{ grouped_ad.advertisement }}">{{ grouped_ad.advertisement }}</option>
+                    <option value="{{ grouped_ad.lowered_adname }}">{{ grouped_ad.advertisement }}</option>
                     {% endfor %}
                 </select>
             </div>

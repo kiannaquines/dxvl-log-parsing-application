@@ -6,7 +6,7 @@ from datetime import datetime
 from dxvl.settings import BASE_DIR, MEDIA_ROOT
 from django.template.loader import get_template
 from django.db.models import F, Value, CharField, Case, When, Count
-from django.db.models.functions import Concat, Extract
+from django.db.models.functions import Concat, Extract, Lower
 from app.utils.utilities import get_week_range
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from django.db.models.functions import TruncDate
@@ -216,37 +216,48 @@ def generate_monthly_report(request):
     context = {}
 
     from django.utils import timezone
-    from datetime import datetime, time
+    from datetime import datetime
 
-    date_from = request.POST.get("date_from")
-    date_to = request.POST.get("date_to")
-    advertisement = request.POST.get("advertisement")
-    
-    total_count = (
-        DXVLLogs.objects.filter(
-            date_aired__range=(date_from, date_to),
-            advertisement=advertisement,
-        ).count()
+    date_from_str = request.POST.get("date_from")
+    date_to_str = request.POST.get("date_to")
+    advertisement_str = request.POST.get("advertisement_name")
+
+    datetime_from = timezone.make_aware(datetime.strptime(date_from_str, "%Y-%m-%d"))
+    datetime_to = timezone.make_aware(datetime.strptime(date_to_str, "%Y-%m-%d"))
+
+    total_count = DXVLLogs.objects.annotate(lowered_name=Lower("advertisement")).filter(
+        lowered_name__icontains=f"{advertisement_str}",
+        date_aired__range=(
+            datetime_from,
+            datetime_to,
+        ),
     )
-
+    
     if total_count == 0:
         return "no_logs_found"
-    
+
     monthly_logs = (
-        DXVLLogs.objects
-        .filter(
-            advertisement=advertisement,
-            date_aired__gte=date_from,
-            date_aired__lt=date_to,
+        DXVLLogs.objects.
+        values("date_aired")
+        .annotate(
+            lowered_adname=Lower("advertisement"),
+            converted_date=TruncDate('date_aired'),
         )
-        .values("advertisement")
+        .filter(
+            lowered_adname__icontains=advertisement_str,
+            date_aired__range=(datetime_from, datetime_to),
+        )
         .annotate(no_played=Count("log_id"))
-        .order_by("-no_played")
+        .values(
+            "log_id",
+            "advertisement",
+            "converted_date"
+        )
     )
-
-    for month_log in monthly_logs:
-        print(month_log)
-
+    print("===========Monthly Logs==============")
+    for log in monthly_logs:
+        print(log.advertisement, log.converted_date, log.no_played)
+    print("===========Monthly Logs==============")
 
     context["monthly_logs"] = monthly_logs
     context["generated_date"] = datetime.now().strftime("%Y-%m-%d")
@@ -254,13 +265,11 @@ def generate_monthly_report(request):
     pdf_file = BytesIO()
 
     try:
-        HTML(string=html_string, base_url=request.build_absolute_uri()).write_pdf(
-            pdf_file
-        )
+        HTML(string=html_string, base_url=request.build_absolute_uri()).write_pdf(pdf_file)
     except Exception:
         return "unexpected_error"
 
-    filename = f"dxvl_monthly_report-{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
+    filename = f"monthly_report-{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
     pdf_dir = os.path.join(MEDIA_ROOT, "pdfs")
     os.makedirs(pdf_dir, exist_ok=True)
     pdf_path = os.path.join(pdf_dir, filename)

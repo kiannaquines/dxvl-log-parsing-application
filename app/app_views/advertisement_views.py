@@ -143,11 +143,13 @@ def dxvl_weekly_report_view(request):
 
 @login_required(login_url=reverse_lazy("login"))
 def dxvl_monthly_report_view(request):
+    from django.db.models.functions import Lower
+
     context = {}
     grouped_ads = (
-        DXVLLogs.objects.values("advertisement")
+        DXVLLogs.objects.values(lowered_adname=Lower("advertisement"))
         .annotate(ads_count=Count("log_id"))
-        .values("ads_count", "advertisement")
+        .values("ads_count","advertisement","lowered_adname")
         .order_by("-ads_count")
     )
 
@@ -295,8 +297,31 @@ def weekly_view(request):
 def monthly_view(request):
     if request.method == "POST":
         result = generate_monthly_report(request=request)
-        print(result)
-
+    
+        if result == "no_logs_found":
+            messages.info(
+                request,
+                "Sorry, no logs found from the given date.",
+                extra_tags="warning",
+            )
+            return HttpResponseRedirect(reverse_lazy("dxvl_monthly_report_view"))
+        else:
+            pdf_path = os.path.join(BASE_DIR, "media", "pdfs", result)
+            if os.path.exists(pdf_path):
+                response = FileResponse(
+                    open(pdf_path, "rb"), content_type="application/pdf"
+                )
+                response["Content-Disposition"] = (
+                    f'attachment; filename="{os.path.basename(pdf_path)}"'
+                )
+                return response
+            else:
+                messages.error(
+                    request,
+                    "The generated file could not be found.",
+                    extra_tags="danger",
+                )
+                return HttpResponseRedirect(reverse_lazy("dxvl_weekly_report_view"))
 
     return HttpResponseBadRequest(
         "Invalid request method. Only POST requests are allowed."
