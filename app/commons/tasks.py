@@ -244,21 +244,9 @@ def generate_monthly_report(request):
         .order_by("grouped_date")
     )
 
-    monthly_data_logs = [
-        {
-            "grouped_data": "date",
-            "advertisement": "ads_name",
-            "data": {
-                "time1": "5:56 am",
-                "time2": "5:57 am",
-                "time3": "5:58 am",
-            },
-            "remarks": "Aired",
-         }
-    ]
+    monthly_data_logs = []
 
     for grouped_data in grouped_by_date:
-        print("==========",grouped_data["grouped_date"],"==========")
 
         individual_logs_per_group = (
             DXVLLogs.objects.filter(
@@ -270,22 +258,16 @@ def generate_monthly_report(request):
             )
         )
 
-        # monthly_data_logs.append(
-        #     {
-        #         "grouped_data": grouped_data["grouped_date"].strftime("%Y-%m-%d"),
-        #         "advertisement": grouped_data["advertisement"],
-        #         "data": spot,
-        #         "remarks": grouped_data["remarks"],
-        #     }
-        # )
+        time_data = {f"spot{i+1}": individual_log.time.strftime('%I:%M %p') for i, individual_log in enumerate(individual_logs_per_group)}
 
-        for individual_log in individual_logs_per_group:
-            print(individual_log.advertisement)
-            print(individual_log.time)
-            print(individual_log.remarks)
-
-        print("==========",grouped_data["grouped_date"],"==========")
-
+        monthly_data_logs.append(
+            {
+                "grouped_data": grouped_data["grouped_date"].strftime("%Y-%m-%d"),
+                "advertisement": grouped_data["advertisement"],
+                "data": time_data,
+                "remarks": grouped_data["remarks"],
+            }
+        )
 
     context["generated_date"] = datetime.now().strftime("%Y-%m-%d")
     html_string = render_to_string("pdf_template/template_monthly.html", context)
