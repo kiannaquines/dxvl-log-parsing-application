@@ -1,12 +1,12 @@
 import os
 from xhtml2pdf import pisa
 from app.models import DXVLLogs
-from app.commons.common_services import filter_objects_count, filter_objects
+from app.commons.common_services import filter_objects_count
 from datetime import datetime
 from dxvl.settings import BASE_DIR, MEDIA_ROOT
 from django.template.loader import get_template
-from django.db.models import F, Value, CharField, Case, When, Count, Min, Max
-from django.db.models.functions import Concat, Extract, Lower
+from django.db.models import F, Value, CharField, Case, When, Count
+from django.db.models.functions import Concat, Extract
 from app.utils.utilities import get_week_range
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from django.db.models.functions import TruncDate, TruncTime
@@ -14,7 +14,7 @@ from django.template.loader import render_to_string
 from weasyprint import HTML
 from io import BytesIO
 from datetime import datetime
-
+from django.utils import timezone
 
 def chunk_generator(total_count, chunk_size):
     start = 0
@@ -215,9 +215,6 @@ def generate_weekly_report(request, week):
 def generate_monthly_report(request):
     context = {}
 
-    from django.utils import timezone
-    from datetime import datetime
-
     date_from_str = request.POST.get("date_from")
     date_to_str = request.POST.get("date_to")
     advertisement_str = request.POST.get("advertisement_name", "").strip()
@@ -260,14 +257,12 @@ def generate_monthly_report(request):
 
         time_data = {f"spot{i+1}": individual_log.time.strftime('%I:%M %p') for i, individual_log in enumerate(individual_logs_per_group)}
 
-        monthly_data_logs.append(
-            {
+        monthly_data_logs.append({
                 "grouped_data": grouped_data["grouped_date"].strftime("%Y-%m-%d"),
                 "advertisement": grouped_data["advertisement"],
                 "spots": time_data,
                 "remarks": grouped_data["remarks"],
-            }
-        )
+        })
 
     context["monthly_data_logs"] = monthly_data_logs
     context["generated_date"] = datetime.now().strftime("%Y-%m-%d")
