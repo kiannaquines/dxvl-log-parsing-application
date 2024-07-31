@@ -8,14 +8,14 @@ from django.http import (
 )
 from app.commons.logs_services import *
 from django.urls import reverse_lazy
-from app.models import DXVLLogs
+from app.models import DXVLLogs,Advertisements
 from django.contrib.auth.decorators import login_required
 from app.commons.common_services import (
     all_objects_only,
     all_objects_only_with_order,
     pagination,
 )
-from app.commons.tasks import (
+from app.commons.generate_report_services import (
     generate_monthly_report,
     generate_weekly_report,
     generate_daily_report,
@@ -33,6 +33,8 @@ from django.db.models.functions import (
     ExtractMonth,
     Concat,
 )
+from django.db.models.functions import Lower
+
 
 
 @login_required(login_url=reverse_lazy("login"))
@@ -88,8 +90,27 @@ def upload_advertisement_logs(request):
 
 
 @login_required(login_url=reverse_lazy("login"))
-def advertisement_pricing(request):
-    return render(request, "pricing.html")
+def advertisements(request):
+    context = {}
+
+    grouped_ads = (
+        DXVLLogs.objects.values(lowered_adname=Lower("advertisement"))
+        .annotate(ads_count=Count("log_id"))
+        .values("ads_count","advertisement","lowered_adname")
+        .order_by("-ads_count")
+    )
+
+    dxvl_logs = all_objects_only_with_order(
+        Advertisements.objects,
+        "advertisement_name",
+        "price",
+        "date_added",
+    )
+    page_obj = pagination(dxvl_logs, request.GET.get("page"), 50)
+
+    context["page_object"] = page_obj
+    context['grouped_ads'] = grouped_ads
+    return render(request, "advertisement.html",context)
 
 
 @login_required(login_url=reverse_lazy("login"))
@@ -143,8 +164,6 @@ def dxvl_weekly_report_view(request):
 
 @login_required(login_url=reverse_lazy("login"))
 def dxvl_monthly_report_view(request):
-    from django.db.models.functions import Lower
-
     context = {}
     grouped_ads = (
         DXVLLogs.objects.values(lowered_adname=Lower("advertisement"))

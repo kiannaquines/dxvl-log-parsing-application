@@ -3,7 +3,6 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from app.commons.common_services import create_bulk_query,add_object,filter_objects_exist
 from app.models import DXVLLogs,DXVLLogNames,DXVLUsers
-from django.http import JsonResponse
 from datetime import datetime
 from django.utils import timezone
 from dxvl.settings import BATCH_SIZE, PATTERN

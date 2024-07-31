@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'app',
+    'django_celery_beat'
 ]
 
 MIDDLEWARE = [
@@ -111,3 +112,20 @@ BATCH_SIZE = 1000
 PATTERN = re.compile(r"(\d{2}-[A-Z][a-z]{2}-\d{4} \d{2}:\d{2}:\d{2}) (.*?) - (.*)")
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 100000
+
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
+
+from datetime import timedelta
+
+CELERY_BEAT_SCHEDULE = {
+    'remove_pdf_files': {
+        'task': 'app.mytasks.tasks.remove_pdf_files',
+        'schedule': timedelta(seconds=5),
+    },
+}

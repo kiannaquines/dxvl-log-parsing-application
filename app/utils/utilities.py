@@ -2,8 +2,8 @@ from datetime import datetime, timedelta
 from django.utils import timezone
 
 def get_current_week():
-    start_week = timezone.make_aware((datetime.now() - timedelta(days=datetime.now().weekday())))
-    end_week = timezone.make_aware(start_week + timedelta(days=6))
+    start_week = datetime.now() - timedelta(days=datetime.now().weekday())
+    end_week = start_week + timedelta(days=6)
     return start_week, end_week
 
 def get_current_time():

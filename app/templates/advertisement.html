@@ -1,0 +1,146 @@
+{% extends "./includes/base.html" %}
+{% load static %}
+{% block title %}University DXVL Dashboard{% endblock title %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'assets/vendor/libs/apex-charts/apex-charts.css' %}">
+{% endblock page_css %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 col-lg-12 order-2 order-md-3 order-lg-2 mb-4">
+        <div class="card">
+            <div class="row row-bordered g-0">
+                <div class="col-md-12">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h5>Advertisement</h5>
+                                <span class="text-muted">List of advertisements</span>
+                            </div>
+                            <button data-bs-toggle="modal" data-bs-target="#generateLogsModal" class="btn btn-primary">Add Advertisement</button>
+                        </div>
+                    </div>
+                    <div class="table-responsive text-nowrap">
+                        <table class="table" id="MydataTable">
+                            <caption class="ms-3">Aired advertisement of DXVL</caption>
+                            <thead>
+                                <tr>
+                                    <th>Advertisement</th>
+                                    <th>Artist</th>
+                                    <th>Date Aired</th>
+                                    <th>Remarks</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for dxvl_log in page_object %}
+                                <tr>
+                                    <td>{{ dxvl_log.advertisement }}</td>
+                                    <td>
+                                        <span class="fw-medium">
+                                            {{ dxvl_log.artist }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {{ dxvl_log.date_aired }}
+                                    </td>
+                                    <td>
+                                        {% if dxvl_log.remarks == True %}
+                                        <span class="badge bg-label-primary me-1">
+                                            Aired
+                                        </span>
+                                        {% else %}
+                                        <span class="badge bg-label-danger me-1">
+                                            Unaired
+                                        </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if dxvl_log.status == True %}
+                                        <span class="badge bg-label-primary me-1">
+                                            Active
+                                        </span>
+                                        {% else %}
+                                        <span class="badge bg-label-danger me-1">
+                                            Inactive
+                                        </span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+    
+                        <nav aria-label="Page navigation" class="m-3">
+                            <ul class="pagination">
+                                {% if page_object.has_previous %}
+                                    <li class="page-item first">
+                                        <a class="page-link" href="?page=1"><i class="tf-icon bx bx-chevrons-left"></i></a>
+                                    </li>
+                                    <li class="page-item prev">
+                                        <a class="page-link" href="?page={{ page_object.previous_page_number }}"><i class="tf-icon bx bx-chevron-left"></i></a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item first disabled">
+                                        <a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-left"></i></a>
+                                    </li>
+                                    <li class="page-item prev disabled">
+                                        <a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevron-left"></i></a>
+                                    </li>
+                                {% endif %}
+    
+                                {% for num in page_object.paginator.page_range %}
+                                    {% if page_object.number == num %}
+                                        <li class="page-item active">
+                                            <a class="page-link" href="javascript:void(0);">{{ num }}</a>
+                                        </li>
+                                    {% elif num > page_object.number|add:'-3' and num < page_object.number|add:'3' %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+    
+                                {% if page_object.has_next %}
+                                    <li class="page-item next">
+                                        <a class="page-link" href="?page={{ page_object.next_page_number }}"><i class="tf-icon bx bx-chevron-right"></i></a>
+                                    </li>
+                                    <li class="page-item last">
+                                        <a class="page-link" href="?page={{ page_object.paginator.num_pages }}"><i class="tf-icon bx bx-chevrons-right"></i></a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item next disabled">
+                                        <a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevron-right"></i></a>
+                                    </li>
+                                    <li class="page-item last disabled">
+                                        <a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-right"></i></a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+    
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include './includes/advertisement.html' %}
+{% endblock content %}
+
+
+{% block page_js %}
+<script src="{% static 'assets/vendor/libs/apex-charts/apexcharts.js' %}"></script>
+<script src="{% static 'assets/js/dashboards-analytics.js' %}"></script>
+<script>
+    $(document).ready(function(){
+        $( '#advertisement_name' ).select2( {
+            theme: "bootstrap-5",
+            width: $(this).data('width') ? $(this).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+            placeholder: $( this ).data( 'placeholder' ),
+            dropdownParent: $('#generateLogsModal')
+        } );
+    });
+</script>
+{% endblock page_js %}

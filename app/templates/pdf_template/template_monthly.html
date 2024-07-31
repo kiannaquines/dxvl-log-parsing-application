@@ -1,10 +1,13 @@
 {% load static %}
+{% load custom_filters %}
+{% load custom_tags %}
+
 <!DOCTYPE html>
 <html>
 <head>
     <style>
         @page {
-            size: A4 landscape;
+            size: A3 landscape;
             margin: 35pt 35pt 35pt 35pt;
         }
 
@@ -101,28 +104,33 @@
         <table id="customers">
             <thead>
                 <tr>
+                    <th>Advertisement</th>
                     <th>Date</th>
-                    <th>Time Aired</th>
-                    {% for count in no_played %}
-                    <th>Spot {{ count }}</th>
+                    {% for i in max_spots|custom_range %}
+                        <th>Spot {{ forloop.counter }}</th>
                     {% endfor %}
+                    <th>Remarks</th>
                 </tr>
             </thead>
             <tbody>
                 {% for monthly_log in monthly_logs %}
                 <tr>
-                    <td>{{ monthly_log.grouped_date }}</td>
-                    <td>{{ monthly_log.formatted_time }}</td>
-                    <td>{{ monthly_log.artist }}</td>
                     <td>{{ monthly_log.advertisement }}</td>
-                    <td>{{ monthly_log.remarks_padded }}</td>
+                    <td>{{ monthly_log.grouped_data }}</td>
+                    {% for index in max_spots|custom_range %}
+                    {% with "time" as current_index %}
+                    {% concat_str current_index index as time_prefix %}
+                    <td>{{ monthly_log.spots|get_item:time_prefix|default:"-" }}</td>
+                    {% endwith %}
+                    {% endfor %}
+                    <td>{{ monthly_log.remarks|yesno:"Aired,Unaired" }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
     <div id="content_footer">
-        <h3>Effective Areas</h3>
+        <h3>Effective Areas Of Coverage</h3>
         <p>Kabacan, Matalam, Kidapawan City, Pres. Roxas, Antipas, Makilala, Mlang, Tuluan, Datu Paglas, Buluan, Tacurung City, Lambayong, Isulan, Datu Montawal, Pikit, Carmen, Aleosan, Midsayap, Libungan, Pigcawayan, Alamada, Banisilan, Damulog, Cotabato City, Bansalan.</p>
     </div>
 </body>

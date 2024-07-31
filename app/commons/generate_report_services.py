@@ -23,7 +23,6 @@ def chunk_generator(total_count, chunk_size):
         yield (start, end)
         start = end
 
-
 def fetch_chunk(start, end, first_day, last_day):
     return list(
         DXVLLogs.objects.filter(date_aired__gte=first_day, date_aired__lte=last_day)
@@ -52,7 +51,6 @@ def fetch_chunk(start, end, first_day, last_day):
             "remarks_padded",
         )[start:end]
     )
-
 
 def generate_daily_report(date, response):
     count_check = filter_objects_count(
@@ -162,7 +160,6 @@ def generate_daily_report(date, response):
 
     return createPDF
 
-
 def generate_weekly_report(request, week):
     context = {}
     first_day_of_week, last_day_of_week = get_week_range(week)
@@ -211,7 +208,6 @@ def generate_weekly_report(request, week):
 
     return filename
 
-
 def generate_monthly_report(request):
     context = {}
 
@@ -255,7 +251,7 @@ def generate_monthly_report(request):
             )
         )
 
-        time_data = {f"spot{i+1}": individual_log.time.strftime('%I:%M %p') for i, individual_log in enumerate(individual_logs_per_group)}
+        time_data = {f"time{i}": individual_log.time.strftime('%I:%M %p') for i, individual_log in enumerate(individual_logs_per_group)}
 
         monthly_data_logs.append({
                 "grouped_data": grouped_data["grouped_date"].strftime("%Y-%m-%d"),
@@ -264,7 +260,14 @@ def generate_monthly_report(request):
                 "remarks": grouped_data["remarks"],
         })
 
-    context["monthly_data_logs"] = monthly_data_logs
+    max_spots = 0
+    for log in monthly_data_logs:
+        num_spots = len(log['spots'])
+        if num_spots > max_spots:
+            max_spots = num_spots
+
+    context["monthly_logs"] = monthly_data_logs
+    context["max_spots"] = max_spots
     context["generated_date"] = datetime.now().strftime("%Y-%m-%d")
     html_string = render_to_string("pdf_template/template_monthly.html", context)
     pdf_file = BytesIO()

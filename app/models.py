@@ -46,10 +46,12 @@ class DXVLLogNames(models.Model):
 
 class Advertisements(models.Model):
     advertisement_id = models.AutoField(primary_key=True,unique=True, editable=False)
-    advertisement_name = models.ForeignKey(DXVLLogs, on_delete=models.SET_NULL,null=True,blank=True)
+    advertisement_name = models.CharField(max_length=255,unique=True,null=True,blank=True)
+    advertisement_price = models.DecimalField(max_digits=10,decimal_places=2,null=True,blank=True)
+    date_added = models.DateTimeField(auto_now_add=True)
     
     def __str__(self) -> str:
-        return f'Advertisement: {self.advertisement_name}'
+        return self.advertisement_name
 
 class DXVLAdvertisementPrices(models.Model):
     price = models.FloatField()
