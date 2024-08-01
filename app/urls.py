@@ -19,6 +19,7 @@ urlpatterns = [
     path('dashboard/advertisement/report/daily',dxvl_daily_report_view,name="dxvl_daily_report_view"),
     path('dashboard/advertisement/report/weekly',dxvl_weekly_report_view,name="dxvl_weekly_report_view"),
     path('dashboard/advertisement/report/monthly',dxvl_monthly_report_view,name="dxvl_monthly_report_view"),
+    path('dashboard/advertisement/delete/<int:pk>',delete_advertisement,name="delete_advertisement"),
 
     # Generate Reports routes
     path('dashboard/advertisement/report/daily/generate',daily_view,name="daily_report_generate"),

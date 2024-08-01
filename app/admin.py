@@ -40,10 +40,7 @@ class DXVLAdvertisementPricesAdmin(admin.ModelAdmin):
     list_display = ('advertisement', 'price')
 
 
-# admin.site.register(DXVLAdvertisementPrices, DXVLAdvertisementPricesAdmin)
 admin.site.register(DXVLLogs, DXVLLogsAdmin)
 admin.site.register(DXVLUsers, DXVLUsersAdmin)
 admin.site.register(DXVLLogNames, DXVLLogNamesAdmin)
-
-
 admin.site.register(Advertisements)

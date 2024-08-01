@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from uuid import uuid4
 
 class DXVLUsers(AbstractUser):
     user_address = models.TextField(max_length=255, blank=True,null=True)
@@ -12,7 +11,6 @@ class DXVLUsers(AbstractUser):
     class Meta:
         db_table = 'dxvl_users'
         verbose_name = 'DXVL User'
-
 
 class DXVLLogs(models.Model):
     log_id = models.AutoField(primary_key=True)
@@ -52,15 +50,8 @@ class Advertisements(models.Model):
     
     def __str__(self) -> str:
         return self.advertisement_name
-
-class DXVLAdvertisementPrices(models.Model):
-    price = models.FloatField()
-    advertisement = models.CharField(max_length=255, blank=True)
-
-
-    def __str__(self) -> str:
-        return f'Advertisement {self.advertisement} price: {self.price}'
     
     class Meta:
-        db_table = 'dxvl_advertisement_prices'
-        verbose_name = 'DXVL Advertisement Price'
+        db_table = 'dxvl_advertisements'
+        verbose_name = 'DXVL Advertisement'
+        verbose_name_plural = 'DXVL Advertisements'

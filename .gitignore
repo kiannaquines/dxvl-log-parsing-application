@@ -1,0 +1,8 @@
+app/__pycache__/*
+app/migrations/__pycache__/*
+app/app_views/__pycache__/*
+app/commons/__pycache__/*
+app/templatetags/__pycache__/*
+app/utils/__pycache__/*
+media/pdfs/*
+auto_commit.bat

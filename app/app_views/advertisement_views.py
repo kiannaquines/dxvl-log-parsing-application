@@ -14,6 +14,7 @@ from app.commons.common_services import (
     all_objects_only,
     all_objects_only_with_order,
     pagination,
+    add_object,
 )
 from app.commons.generate_report_services import (
     generate_monthly_report,
@@ -34,8 +35,7 @@ from django.db.models.functions import (
     Concat,
 )
 from django.db.models.functions import Lower
-
-
+from django.db import IntegrityError
 
 @login_required(login_url=reverse_lazy("login"))
 def parse_logs_view(request):
@@ -93,6 +93,24 @@ def upload_advertisement_logs(request):
 def advertisements(request):
     context = {}
 
+    if request.method == "POST":
+        price = request.POST.get("ad_price")
+        advertisement_name = request.POST.get("advertisement_name","").strip()
+
+        try:
+
+            Advertisements.objects.create(
+                advertisement_price=price,
+                advertisement_name=advertisement_name,
+            )
+
+            messages.error(request, "Advertisement have successfully added new advertisement.",extra_tags="primary")
+            return HttpResponseRedirect(reverse_lazy("advertisements"))
+        
+        except IntegrityError:
+            messages.error(request, "Advertisement already exists.",extra_tags="danger")
+            return HttpResponseRedirect(reverse_lazy("advertisements"))
+
     grouped_ads = (
         DXVLLogs.objects.values(lowered_adname=Lower("advertisement"))
         .annotate(ads_count=Count("log_id"))
@@ -100,17 +118,23 @@ def advertisements(request):
         .order_by("-ads_count")
     )
 
-    dxvl_logs = all_objects_only_with_order(
-        Advertisements.objects,
-        "advertisement_name",
-        "price",
-        "date_added",
-    )
-    page_obj = pagination(dxvl_logs, request.GET.get("page"), 50)
+    dxvl_logs = Advertisements.objects.all().order_by("-date_added")[:50]
 
+    page_obj = pagination(dxvl_logs, request.GET.get("page"), 50)
+    
     context["page_object"] = page_obj
     context['grouped_ads'] = grouped_ads
     return render(request, "advertisement.html",context)
+
+
+def delete_advertisement(request, pk):
+    try:
+        Advertisements.objects.filter(advertisement_id=pk).delete()
+        messages.success(request, "Advertisement has been successfully deleted.", extra_tags="primary")
+    except Exception as e:
+        messages.error(request, f"Error deleting advertisement: {str(e)}", extra_tags="danger")
+    
+    return HttpResponseRedirect(reverse_lazy("advertisements"))
 
 
 @login_required(login_url=reverse_lazy("login"))
@@ -173,39 +197,8 @@ def dxvl_monthly_report_view(request):
     )
 
     grouped_logs = (
-        DXVLLogs.objects.annotate(trunc_month=TruncMonth("date_aired"))
-        .annotate(
-            month=ExtractMonth("trunc_month"),
-            day=ExtractDay("trunc_month"),
-            year=ExtractYear("trunc_month"),
-        )
-        .annotate(
-            month_padded=Case(
-                When(
-                    month__lt=10,
-                    then=Concat(Value("0"), F("month"), output_field=CharField()),
-                ),
-                default=F("month"),
-                output_field=CharField(),
-            ),
-            day_padded=Case(
-                When(
-                    day__lt=10,
-                    then=Concat(Value("0"), F("day"), output_field=CharField()),
-                ),
-                default=F("day"),
-                output_field=CharField(),
-            ),
-            full_date=Concat(
-                F("month_padded"),
-                Value("/"),
-                F("day_padded"),
-                Value("/"),
-                F("year"),
-                output_field=CharField(),
-            ),
-        )
-        .values("advertisement", "full_date", "artist", "status", "remarks")
+        DXVLLogs.objects.annotate(month=TruncMonth("date_aired"))
+        .values("advertisement", "month", "artist", "status", "remarks")
         .annotate(ads_count=Count("log_id"))
         .order_by("advertisement")
     )

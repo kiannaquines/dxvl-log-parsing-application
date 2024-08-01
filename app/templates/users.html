@@ -3,9 +3,7 @@
 {% block title %}University DXVL Dashboard{% endblock title %}
 
 {% block page_css %}
-<link rel="stylesheet" href="{% static 'assets/vendor/libs/apex-charts/apex-charts.css' %}">
 <link rel="stylesheet" href="{% static 'assets/vendor/css/special.css' %}">
-
 {% endblock page_css %}
 
 {% block content %}
@@ -62,14 +60,6 @@
                                                 <i class="bx bx-edit-alt me-1"></i>
                                                 Edit
                                             </a>
-                                            <!-- <a class="dropdown-item" href="#">
-                                                <i class='bx bx-lock-open me-1' ></i>
-                                                Permissions
-                                            </a>
-                                            <a class="dropdown-item" href="#">
-                                                <i class="bx bx-group me-1"></i>
-                                                Group
-                                            </a> -->
                                             <a class="dropdown-item" href="{% url 'delete_user' pk=user.id %}">
                                                 <i class="bx bx-trash me-1"></i>
                                                 Delete
@@ -139,6 +129,4 @@
 
 
 {% block page_js %}
-<script src="{% static 'assets/vendor/libs/apex-charts/apexcharts.js' %}"></script>
-<script src="{% static 'assets/js/dashboards-analytics.js' %}"></script>
 {% endblock page_js %}

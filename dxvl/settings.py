@@ -3,15 +3,9 @@ import os
 import re
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
 SECRET_KEY = 'django-insecure-66w(2x^k=rqv3gqkir&xptn14c%bze91u+@l*we2b86p$7zt%u'
-
 DEBUG = True
-
 ALLOWED_HOSTS = ["*"]
-
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -20,9 +14,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'app',
-    'django_celery_beat'
 ]
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -33,11 +25,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
-
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
 ROOT_URLCONF = 'dxvl.urls'
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -53,9 +42,7 @@ TEMPLATES = [
         },
     },
 ]
-
 WSGI_APPLICATION = 'dxvl.wsgi.application'
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
@@ -69,7 +56,6 @@ DATABASES = {
         }
     }
 }
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -84,48 +70,18 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 AUTH_USER_MODEL = 'app.DXVLUsers'
-
 LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
+TIME_ZONE = 'Asia/Manila'
 USE_I18N = True
-
 USE_TZ = True
-
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR,'static'),
 ]
-
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
-
 STATIC_URL = 'static/'
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-
 BATCH_SIZE = 1000
 PATTERN = re.compile(r"(\d{2}-[A-Z][a-z]{2}-\d{4} \d{2}:\d{2}:\d{2}) (.*?) - (.*)")
-
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 100000
-
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'UTC'
-
-from datetime import timedelta
-
-CELERY_BEAT_SCHEDULE = {
-    'remove_pdf_files': {
-        'task': 'app.mytasks.tasks.remove_pdf_files',
-        'schedule': timedelta(seconds=5),
-    },
-}

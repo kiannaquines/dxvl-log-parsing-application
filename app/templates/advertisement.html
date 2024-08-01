@@ -9,6 +9,7 @@
 {% block content %}
 <div class="row">
     <div class="col-12 col-lg-12 order-2 order-md-3 order-lg-2 mb-4">
+        {% include './includes/message_box.html' %}
         <div class="card">
             <div class="row row-bordered g-0">
                 <div class="col-md-12">
@@ -27,45 +28,35 @@
                             <thead>
                                 <tr>
                                     <th>Advertisement</th>
-                                    <th>Artist</th>
-                                    <th>Date Aired</th>
-                                    <th>Remarks</th>
-                                    <th>Status</th>
+                                    <th>Advertisement Price</th>
+                                    <th>Date Added</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for dxvl_log in page_object %}
                                 <tr>
-                                    <td>{{ dxvl_log.advertisement }}</td>
+                                    <td>{{ dxvl_log.advertisement_name }}</td>
+                                    
                                     <td>
-                                        <span class="fw-medium">
-                                            {{ dxvl_log.artist }}
-                                        </span>
+                                        {{ dxvl_log.advertisement_price }}
+                                    </td>
+
+                                    <td>
+                                        {{ dxvl_log.date_added }}
                                     </td>
                                     <td>
-                                        {{ dxvl_log.date_aired }}
-                                    </td>
-                                    <td>
-                                        {% if dxvl_log.remarks == True %}
-                                        <span class="badge bg-label-primary me-1">
-                                            Aired
-                                        </span>
-                                        {% else %}
-                                        <span class="badge bg-label-danger me-1">
-                                            Unaired
-                                        </span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if dxvl_log.status == True %}
-                                        <span class="badge bg-label-primary me-1">
-                                            Active
-                                        </span>
-                                        {% else %}
-                                        <span class="badge bg-label-danger me-1">
-                                            Inactive
-                                        </span>
-                                        {% endif %}
+                                        <div class="dropdown">
+                                            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                                <i class="bx bx-dots-vertical-rounded"></i>
+                                            </button>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item" href="{% url 'delete_advertisement' pk=dxvl_log.advertisement_id %}">
+                                                    <i class="bx bx-trash me-1"></i>
+                                                    Delete
+                                                </a>
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -131,8 +122,6 @@
 
 
 {% block page_js %}
-<script src="{% static 'assets/vendor/libs/apex-charts/apexcharts.js' %}"></script>
-<script src="{% static 'assets/js/dashboards-analytics.js' %}"></script>
 <script>
     $(document).ready(function(){
         $( '#advertisement_name' ).select2( {

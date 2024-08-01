@@ -1,6 +1,6 @@
 from django.forms import ModelForm
 from django.contrib.auth.forms import UserCreationForm
-from app.models import DXVLUsers
+from app.models import DXVLUsers, Advertisements
 from django import forms
 
 class RegisterUserForm(UserCreationForm):
@@ -49,4 +49,3 @@ class EditUserForm(ModelForm):
         model = DXVLUsers
         fields = ['username', 'first_name', 'last_name', 'email','user_address', 'user_mobile_number', 'is_active', 'is_superuser', 'is_staff',]
         exclude = ['password1', 'password2',]
-        
