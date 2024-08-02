@@ -8,75 +8,80 @@
   axisColor = config.colors.axisColor;
   borderColor = config.colors.borderColor;
 
+  fetch('/dashboard/advertisement/daily/logs')
+  .then( response => response.json())
+  .then( jsonData => {
 
+    var current_year = jsonData[0].year;
+    var daily_logs = jsonData[0].logs;
 
-  var Weeklyoptions = {
-    series: [
-      {
-        name: 'This Week Aired Advertisements',
-        data: [31, 40, 28, 51, 42, 109, 100]
-      },
-      {
-        name: 'Last Week Aired Advertisements',
-        data: [31, 15, 12, 56, 46, 42, 21]
-      }
-    ],
-    chart: {
-      height: 350,
-      type: 'area',
-      fontFamily: 'Public Sans, Arial, sans-serif',
-    },
-    fill: {
-      type: 'gradient',
-      gradient: {
-        shadeIntensity: 1,
-        opacityFrom: 0.7,
-        opacityTo: 0.9,
-        stops: [0, 100]
-      }
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      curve: 'smooth'
-    },
-    xaxis: {
-      type: 'datetime',
-      categories: ["2018-09-19T00:00:00.000Z", "2018-09-19T01:30:00.000Z", "2018-09-19T02:30:00.000Z", "2018-09-19T03:30:00.000Z", "2018-09-19T04:30:00.000Z", "2018-09-19T05:30:00.000Z", "2018-09-19T06:30:00.000Z"],
-      labels: {
-        style: {
-          fontSize: '13px',
-          colors: '#95A2AF'
+    var currentYearDataY = daily_logs.map(item => item.daily_count);
+    var currentYearDataX = daily_logs.map(item => item.date_only_aired);
+
+    var Weeklyoptions = {
+      series: [
+        {
+          name: `${current_year} DXVL Aired Advertisements`,
+          data: currentYearDataY,
         }
-      }
-    },
-    yaxis: {
-      labels: {
-        style: {
-          fontSize: '13px',
-          colors: '#95A2AF'
+      ],
+      chart: {
+        height: 360,
+        type: 'area',
+        fontFamily: 'Public Sans, Arial, sans-serif',
+      },
+      fill: {
+        type: 'gradient',
+        gradient: {
+          shadeIntensity: 1,
+          opacityFrom: 0.7,
+          opacityTo: 0.9,
+          stops: [0, 100]
         }
+      },
+      dataLabels: {
+        enabled: false,
+      },
+      stroke: {
+        curve: 'smooth'
+      },
+      xaxis: {
+        type: 'datetime',
+        categories: currentYearDataX,
+        labels: {
+          style: {
+            fontSize: '13px',
+            colors: '#95A2AF'
+          }
+        }
+      },
+      yaxis: {
+        labels: {
+          style: {
+            fontSize: '13px',
+            colors: '#95A2AF'
+          }
+        }
+      },
+      tooltip: {
+        shared: true,
+        intersect: false,
+        onDatasetHover: {
+          highlightDataSeries: false,
+        },
+        x: {
+          format: 'dd/MM/yy'
+        },
+      },
+      colors: [config.colors.primary],
+      grid:{
+        show: true,
+        strokeDashArray: 5,
       }
-    },
-    tooltip: {
-      shared: true,
-      intersect: false,
-      onDatasetHover: {
-        highlightDataSeries: false,
-      },
-      x: {
-        format: 'dd/MM/yy HH:mm'
-      },
-    },
-    colors: [config.colors.warning,config.colors.primary],
-    grid:{
-      show: true,
-      strokeDashArray: 5,
-    }
-  };
+    };
 
-  var WeeklyComparison = new ApexCharts(document.querySelector("#WeeklyComparisonAiredAdvertisements"), Weeklyoptions);
-  WeeklyComparison.render();
+    var WeeklyComparison = new ApexCharts(document.querySelector("#WeeklyComparisonAiredAdvertisements"), Weeklyoptions);
+    WeeklyComparison.render();
+  })
 
 })();

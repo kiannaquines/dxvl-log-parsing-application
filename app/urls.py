@@ -15,6 +15,7 @@ urlpatterns = [
     path('dashboard/',dashboard_page_view,name="dashboard"),
     path('dashboard/advertisement/logs',dxvl_logs_view,name="logs_view"),
     path('dashboard/advertisement/logs/uploads',upload_advertisement_logs,name="upload_advertisement_logs"),
+    path('dashboard/advertisement/daily/logs',fetch_current_year_daily_logs,name="fetch_daily_logs"),
     path('dashboard/advertisement',advertisements,name="advertisements"),
     path('dashboard/advertisement/report/daily',dxvl_daily_report_view,name="dxvl_daily_report_view"),
     path('dashboard/advertisement/report/weekly',dxvl_weekly_report_view,name="dxvl_weekly_report_view"),
