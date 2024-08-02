@@ -11,8 +11,8 @@
                 <label for="date_to" class="form-label">Advertisement</label>
                 <select name="advertisement_name" id="advertisement_name" class="form-select" data-placeholder="Choose one thing">
                     <option></option>
-                    {% for grouped_ad in grouped_ads %}
-                    <option value="{{ grouped_ad.advertisement }}">{{ grouped_ad.advertisement }}</option>
+                    {% for ad in ads %}
+                    <option value="{{ ad.advertisement_name }}">{{ ad.advertisement_name }}</option>
                     {% endfor %}
                 </select>
             </div>

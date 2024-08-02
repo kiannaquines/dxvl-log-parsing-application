@@ -1,10 +1,11 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <style>
         @page {
-            size: A4;
-            margin: 50pt 50pt 50pt 50pt;
+            size: A3 landscape;
+            margin: 35pt 35pt 35pt 35pt;
         }
 
         body {
@@ -13,8 +14,11 @@
             margin: 0;
         }
 
-        #header_content {
-            margin-bottom: 1rem;
+        #header_content{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
         }
 
         #header_content img {
@@ -68,31 +72,28 @@
             margin-top: 2rem;
         }
 
-        .page-break {
-            page-break-before: always;
+        .border_header{
+            border: 2px solid #0850a0;
+            margin-top: 13px;
+            margin-bottom: 13px;
         }
+
     </style>
 </head>
 <body>
     <div id="header_content">
-        <table width="100%">
-            <tr>
-                <td width="30%" style="vertical-align: top;">
-                    <img src="{{ logo_path }}" alt="Logo">
-                </td>
-                <td width="70%" style="vertical-align: top; text-align: right;">
-                    <h3>DXVL - FM KOOL 94.9 mHz</h3>
-                    <p>DXVL New Broadcast Center (beside UICT Bldg.)</p>
-                    <p>USM Compound, Kabacan, Cotabato</p>
-                    <p>Email Address: dxvlkoolfm@gmail.com</p>
-                    <p>Facebook Page: www.facebook.com/usmkoolfm</p>
-                </td>
-            </tr>
-        </table>
+        <div class="header_img">
+            <img src="{% static 'assets/img/icons/logo.png' %}" alt="DXVL Logo Here">
+        </div>
+        <div class="header_text">
+            <h3>DXVL - FM KOOL 94.9 mHz</h3>
+            <p>DXVL New Broadcast Center (beside UICT Bldg.)</p>
+            <p>USM Compound, Kabacan, Cotabato</p>
+            <p>Email Address: dxvlkoolfm@gmail.com</p>
+            <p>Facebook Page: www.facebook.com/usmkoolfm</p>
+        </div>
     </div>
-
-    <div class="page-break"></div>
-    
+    <div class="border_header"></div>    
     <div id="content_frame">
         <table id="customers">
             <thead>
@@ -105,37 +106,15 @@
                 </tr>
             </thead>
             <tbody>
-                {% if daily_logs %}
-                    {% for daily_log in daily_logs %}
-                    <tr>
-                        <td>{{ daily_log.formatted_date }}</td>
-                        <td>{{ daily_log.formatted_time }}</td>
-                        <td>{{ daily_log.artist }}</td>
-                        <td>{{ daily_log.advertisement }}</td>
-                        <td>{{ daily_log.remarks_padded }}</td>
-                    </tr>
-                    {% endfor %}
-                {% elif weekly_logs %}
-                    {% for weekly_log in weekly_logs %}
-                    <tr>
-                        <td>{{ weekly_log.formatted_date }}</td>
-                        <td>{{ weekly_log.formatted_time }}</td>
-                        <td>{{ weekly_log.artist }}</td>
-                        <td>{{ weekly_log.advertisement }}</td>
-                        <td>{{ weekly_log.remarks_padded }}</td>
-                    </tr>
-                    {% endfor %}
-                {% else %}
-                    {% for monthly_log in monthly_logs %}
-                    <tr>
-                        <td>{{ monthly_log.formatted_date }}</td>
-                        <td>{{ monthly_log.formatted_time }}</td>
-                        <td>{{ monthly_log.artist }}</td>
-                        <td>{{ monthly_log.advertisement }}</td>
-                        <td>{{ monthly_log.remarks_padded }}</td>
-                    </tr>
-                    {% endfor %}
-                {% endif %}
+                {% for daily_log in daily_logs %}
+                <tr>
+                    <td>{{ daily_log.formatted_date }}</td>
+                    <td>{{ daily_log.formatted_time }}</td>
+                    <td>{{ daily_log.artist }}</td>
+                    <td>{{ daily_log.advertisement }}</td>
+                    <td>{{ daily_log.remarks_padded }}</td>
+                </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>

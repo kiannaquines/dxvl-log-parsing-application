@@ -4,6 +4,8 @@ from app.commons.common_services import all_objects_only_with_order_limit,count_
 from app.utils.utilities import get_current_week, get_last_week_time
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
+from django.db.models.functions import TruncDate
+from django.db.models import Count
 
 @login_required(login_url=reverse_lazy('login'))
 def dashboard_page_view(request):
@@ -21,6 +23,20 @@ def dashboard_page_view(request):
     # Logs
     dxvl_logs = all_objects_only_with_order_limit(DXVLLogs.objects, "date_aired", "artist", "advertisement","status","date_aired",limit=30)
 
+    # Count Logs Per Day
+    daily_logs = (
+        DXVLLogs.objects.annotate(
+            date_only_aired=TruncDate('date_aired')
+        ).values(
+            'date_only_aired'
+        ).annotate(
+            daily_count=Count('log_id')
+        ).order_by(
+            '-daily_count'
+        )
+    )
+    
+    context["daily_logs"] = daily_logs
     context["dxvl_logs"] = dxvl_logs
     context["total_logs"] = f"{result_total_logs:,}"
     context["total_last_week_logs"] = f"{result_logs_last_week:,}"

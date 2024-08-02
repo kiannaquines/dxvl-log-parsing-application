@@ -52,14 +52,12 @@ def fetch_chunk(start, end, first_day, last_day):
         )[start:end]
     )
 
-def generate_daily_report(date, response):
+def generate_daily_report(date, request):
     count_check = filter_objects_count(
         DXVLLogs.objects,
         date_aired__date=date,
     )
 
-    template_pdf = get_template("pdf_template/template.html")
-    context = {}
 
     if count_check == 0:
         return "no_logs_found"
@@ -149,16 +147,29 @@ def generate_daily_report(date, response):
         )
     )
 
+    context = {}
     context["daily_logs"] = daily_logs
     context["generated_date"] = datetime.now().strftime("%Y-%m-%d")
-    context["logo_path"] = os.path.join(BASE_DIR, "static/assets/img/icons/logo.png")
-    rendered = template_pdf.render(context)
-    createPDF = pisa.CreatePDF(rendered, dest=response)
 
-    if createPDF.err:
-        return "error_in_parsing_pdf"
+    html_string = render_to_string("pdf_template/template_daily.html", context)
+    pdf_file = BytesIO()
 
-    return createPDF
+    try:
+        HTML(string=html_string, base_url=request.build_absolute_uri()).write_pdf(
+            pdf_file
+        )
+    except Exception:
+        return "unexpected_error"
+
+    filename = f"dxvl_daily_report-{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
+    pdf_dir = os.path.join(MEDIA_ROOT, "pdfs")
+    os.makedirs(pdf_dir, exist_ok=True)
+    pdf_path = os.path.join(pdf_dir, filename)
+
+    with open(pdf_path, "wb") as pdf_file_out:
+        pdf_file_out.write(pdf_file.getvalue())
+
+    return filename
 
 def generate_weekly_report(request, week):
     context = {}

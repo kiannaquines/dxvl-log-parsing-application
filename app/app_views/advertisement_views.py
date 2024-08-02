@@ -14,7 +14,6 @@ from app.commons.common_services import (
     all_objects_only,
     all_objects_only_with_order,
     pagination,
-    add_object,
 )
 from app.commons.generate_report_services import (
     generate_monthly_report,
@@ -25,12 +24,12 @@ from django.contrib import messages
 from datetime import datetime
 from dxvl.settings import BASE_DIR
 from django.http import HttpResponseRedirect, FileResponse, HttpResponse
-from django.urls import reverse_lazy
-from django.db.models import F, Count, Value, CharField, Case, When
+from django.db.models import Count
 from django.db.models.functions import (
     ExtractDay,
     ExtractYear,
     TruncMonth,
+    TruncDate,
     ExtractMonth,
     Concat,
 )
@@ -189,23 +188,18 @@ def dxvl_weekly_report_view(request):
 @login_required(login_url=reverse_lazy("login"))
 def dxvl_monthly_report_view(request):
     context = {}
-    grouped_ads = (
-        DXVLLogs.objects.values(lowered_adname=Lower("advertisement"))
-        .annotate(ads_count=Count("log_id"))
-        .values("ads_count","advertisement","lowered_adname")
-        .order_by("-ads_count")
-    )
+    advertisements = Advertisements.objects.all().order_by("-date_added")
 
     grouped_logs = (
-        DXVLLogs.objects.annotate(month=TruncMonth("date_aired"))
-        .values("advertisement", "month", "artist", "status", "remarks")
+        DXVLLogs.objects.annotate(date=TruncDate("date_aired"))
+        .values("advertisement", "date", "artist", "status", "remarks")
         .annotate(ads_count=Count("log_id"))
-        .order_by("advertisement")
+        .order_by("-ads_count")
     )
 
     page_obj = pagination(grouped_logs, request.GET.get("page"), 100)
     context["page_object"] = page_obj
-    context["grouped_ads"] = grouped_ads
+    context["ads"] = advertisements
     return render(request, "monthly.html", context)
 
 
@@ -213,15 +207,10 @@ def dxvl_monthly_report_view(request):
 def daily_view(request):
     if request.method == "POST":
 
-        response = HttpResponse(content_type="application/pdf")
-
-        response["Content-Disposition"] = (
-            f'attachment; filename="dxvl_daily_report-{datetime.now()}.pdf"'
-        )
 
         result = generate_daily_report(
             date=request.POST.get("daily"),
-            response=response,
+            request=request,
         )
 
         if result == "no_logs_found":
@@ -245,8 +234,22 @@ def daily_view(request):
             return HttpResponseRedirect(reverse_lazy("dxvl_daily_report_view"))
 
         else:
-
-            return response
+            pdf_path = os.path.join(BASE_DIR, "media", "pdfs", result)
+            if os.path.exists(pdf_path):
+                response = FileResponse(
+                    open(pdf_path, "rb"), content_type="application/pdf"
+                )
+                response["Content-Disposition"] = (
+                    f'attachment; filename="{os.path.basename(pdf_path)}"'
+                )
+                return response
+            else:
+                messages.error(
+                    request,
+                    "The generated file could not be found.",
+                    extra_tags="danger",
+                )
+                return HttpResponseRedirect(reverse_lazy("dxvl_daily_report_view"))
 
     messages.error(
         request,
