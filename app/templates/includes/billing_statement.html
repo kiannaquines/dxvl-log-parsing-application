@@ -1,0 +1,40 @@
+<div
+    class="modal fade"
+    id="downLoadBillingStatementModal"
+    tabindex="-1"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCenterTitle">Download Billing Statement</h5>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+            </div>
+            <div class="modal-body">
+                <form action="#" method="POST">
+                    {% csrf_token %}
+                    <div class="col">
+                        <div class="row">
+                            <div class="col-md-12 mb-2">
+                                <label for="ad_price" class="form-label">Date Range From</label>
+                                <input type="date" class="form-control" id="range_from" name="range_from" value="" />
+                            </div>
+                            <div class="col-md-12 mb-2">
+                                <label for="ad_price" class="form-label">Date Range To</label>
+                                <input type="date" class="form-control" id="range_to" name="range_to" value="" />
+                            </div>
+                            <div class="col-md-12 mt-2">
+                                <button type="submit" class="btn btn-primary">Download Billing Statement</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

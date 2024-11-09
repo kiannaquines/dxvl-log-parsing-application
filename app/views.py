@@ -20,7 +20,7 @@ def login_page_view(request):
                 login(request, user)
                 return redirect(reverse_lazy('dashboard'))
             else:
-                print(login_form.errors)
+                context['error'] = 'Invalid username or password, please try again.'
 
     context['login_form'] = form
     return render(request, 'login.html',context)
@@ -36,7 +36,8 @@ def register_page_view(request):
             register_form.save()
             return redirect(reverse_lazy('login'))
         else:
-            print(register_form.errors)
+            context['error'] = 'Please check your input, registration failed try again.'
+
     context['register_form'] = form
     return render(request, 'register.html',context)
 

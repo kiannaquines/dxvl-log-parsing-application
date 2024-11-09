@@ -20,6 +20,11 @@
 
       <form class="mb-3" method="POST">
         {% csrf_token %}
+        {% if error %}
+        <div class="alert alert-danger">
+          {{ error }}
+        </div>
+        {% endif %}
         {% for input in login_form %}
           {% if input.id_for_label == "id_password" %}
           <div class="mb-3 form-password-toggle">
