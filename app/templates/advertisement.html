@@ -55,7 +55,7 @@
                                                     <i class="bx bx-trash me-1"></i>
                                                     Delete
                                                 </a>
-                                                <a class="dropdown-item"  data-bs-toggle="modal" data-bs-target="#downLoadBillingStatementModal" data-billing="{{ dxvl_log.advertisement_id }}" href="#">
+                                                <a class="dropdown-item" id="download_billing" data-bs-toggle="modal" data-bs-target="#downloadBillingStatementModal" data-billingname="{{ dxvl_log.advertisement_name }}" data-billingid="{{ dxvl_log.advertisement_id }}" href="#">
                                                     <i class="bx bx-download me-1"></i>
                                                     Billing Statement
                                                 </a>
@@ -130,12 +130,22 @@
 {% block page_js %}
 <script>
     $(document).ready(function(){
-        $( '#advertisement_name' ).select2( {
+        $('#advertisement_name' ).select2( {
             theme: "bootstrap-5",
             width: $(this).data('width') ? $(this).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
             placeholder: $( this ).data( 'placeholder' ),
             dropdownParent: $('#generateLogsModal')
-        } );
+        });
+
+
+        $(document).on("click","#download_billing",function(event){
+            var ad_name = $(this).data('billingname')
+            var ad_id = $(this).data('billingid')
+
+            var message = `Generate billing statement for ${ad_name}`
+            $("#billing_ad_name").text(message);
+            $("#ad_id").val(ad_id)
+        });
     });
 </script>
 {% endblock page_js %}

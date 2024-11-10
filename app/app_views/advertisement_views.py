@@ -2,7 +2,6 @@ import os
 from django.shortcuts import render
 from django.http import (
     JsonResponse,
-    HttpResponse,
     HttpResponseBadRequest,
     HttpResponseRedirect,
 )
@@ -21,17 +20,11 @@ from app.commons.generate_report_services import (
     generate_daily_report,
 )
 from django.contrib import messages
-from datetime import datetime
 from dxvl.settings import BASE_DIR
-from django.http import HttpResponseRedirect, FileResponse, HttpResponse
+from django.http import HttpResponseRedirect, FileResponse
 from django.db.models import Count
 from django.db.models.functions import (
-    ExtractDay,
-    ExtractYear,
-    TruncMonth,
     TruncDate,
-    ExtractMonth,
-    Concat,
 )
 from django.db.models.functions import Lower
 from django.db import IntegrityError

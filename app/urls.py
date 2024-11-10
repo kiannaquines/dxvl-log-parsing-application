@@ -35,4 +35,8 @@ urlpatterns = [
     
     # Parse logs routes
     path('dashboard/advertisement/logs/uploads/upload',parse_logs_view,name="parse_logs_view"),
+
+
+
+    path('generate/billing/',generate_billing_statement,name="generate_billing_statement"),
 ]

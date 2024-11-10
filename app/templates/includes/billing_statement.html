@@ -1,6 +1,6 @@
 <div
     class="modal fade"
-    id="downLoadBillingStatementModal"
+    id="downloadBillingStatementModal"
     tabindex="-1"
     aria-hidden="true"
 >
@@ -16,10 +16,16 @@
                 ></button>
             </div>
             <div class="modal-body">
-                <form action="#" method="POST">
+                <h6 id="billing_ad_name"></h6>
+                <form action="{% url 'generate_billing_statement' %}" method="POST">
                     {% csrf_token %}
+                    <input type="hidden" id="ad_id" name="ad_id" />
                     <div class="col">
                         <div class="row">
+                            <div class="col-md-12 mb-2">
+                                <label for="account_name" class="form-label">Account Name</label>
+                                <input type="text" class="form-control" id="account_name" name="account_name" value="" />
+                            </div>
                             <div class="col-md-12 mb-2">
                                 <label for="ad_price" class="form-label">Date Range From</label>
                                 <input type="date" class="form-control" id="range_from" name="range_from" value="" />
