@@ -18,7 +18,10 @@
                             <h5>DXVL Aired Advertisement Logs</h5>
                             <span class="text-muted">Your all existing logs in your database.</span>
                         </div>
-                        <button data-bs-toggle="modal" data-bs-target="#generateLogsModal" class="btn btn-primary">Generate Weekly Logs</button>
+                        <div>
+                            <button data-bs-toggle="modal" data-bs-target="#generateReportModal" class="btn btn-primary">Download Report</button>
+                            <button data-bs-toggle="modal" data-bs-target="#generateLogsModal" class="btn btn-primary">Generate Weekly Logs</button>
+                        </div>
                     </div>
                 </div>
                 <div class="table-responsive text-nowrap">
@@ -126,42 +129,49 @@
     </div>
 </div>
 {% include './includes/generate_weekly.html' %}
+{% include './includes/generate_daily_weekly.html' %}
 {% endblock content %}
 
 
 {% block page_js %}
 <script>
-   $(function(){
-            $(document).ready(function() {
-                let today = new Date();
+    $(document).ready(function() {
+        let today = new Date();
 
-                let startOfWeek = new Date(today.setDate(today.getDate() - today.getDay() + 1));
-                let nextWeek = new Date(startOfWeek);
-                nextWeek.setDate(nextWeek.getDate() + 7);
+        let startOfWeek = new Date(today.setDate(today.getDate() - today.getDay() + 1));
+        let nextWeek = new Date(startOfWeek);
+        nextWeek.setDate(nextWeek.getDate() + 7);
 
-                let weekForm = getISOWeek(startOfWeek);
-                let weekTo = getISOWeek(nextWeek);
+        let weekForm = getISOWeek(startOfWeek);
+        let weekTo = getISOWeek(nextWeek);
 
-                $('#week_from').val(weekForm);
-                $('#week_to').val(weekTo);
+        $('#week_from').val(weekForm);
+        $('#week_to').val(weekTo);
 
-                function getISOWeek(date) {
-                    let year = date.getFullYear();
-                    let month = date.getMonth() + 1;
-                    let day = date.getDate();
-                    if (month < 10) month = '0' + month;
-                    if (day < 10) day = '0' + day;
-                    return year + '-W' + getWeekNumber(date);
-                }
+        function getISOWeek(date) {
+            let year = date.getFullYear();
+            let month = date.getMonth() + 1;
+            let day = date.getDate();
+            if (month < 10) month = '0' + month;
+            if (day < 10) day = '0' + day;
+            return year + '-W' + getWeekNumber(date);
+        }
 
-                function getWeekNumber(date) {
-                    date = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-                    date.setUTCDate(date.getUTCDate() + 4 - (date.getUTCDay() || 7));
-                    let yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
-                    let weekNo = Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
-                    return weekNo < 10 ? '0' + weekNo : weekNo;
-                }
-            });
+        function getWeekNumber(date) {
+            date = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+            date.setUTCDate(date.getUTCDate() + 4 - (date.getUTCDay() || 7));
+            let yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+            let weekNo = Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+            return weekNo < 10 ? '0' + weekNo : weekNo;
+        }
+
+        $('#advertisement_name').select2( {
+            theme: "bootstrap-5",
+            width: $(this).data('width') ? $(this).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+            placeholder: $( this ).data( 'placeholder' ),
+            dropdownParent: $('#generateReportModal')
         });
+
+    });
 </script>
 {% endblock page_js %}

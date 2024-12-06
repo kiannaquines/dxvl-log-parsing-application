@@ -1,7 +1,35 @@
 from django.forms import ModelForm
 from django.contrib.auth.forms import UserCreationForm
-from app.models import DXVLUsers, Advertisements
+from app.models import DXVLUsers, Advertisements, SearchKeyWords
 from django import forms
+
+
+class SearchKeywordForm(forms.ModelForm):
+    
+    def __init__(self, *args, **kwargs):
+        super(SearchKeywordForm, self).__init__(*args, **kwargs)
+        self.fields['keyword'].label = 'Search Keyword'
+        self.fields['keyword'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Search Keyword'})
+        self.fields['keyword'].required = True
+        self.fields['keyword'].help_text = 'Enter a search keyword.'
+
+    class Meta:
+        model = SearchKeyWords
+        fields = '__all__'
+
+
+class UpdateAdvertismentInfoForm(forms.ModelForm):
+    
+    def __init__(self, *args, **kwargs):
+        super(UpdateAdvertismentInfoForm, self).__init__(*args, **kwargs)
+        self.fields['advertisement_price'].label = 'New Price'
+        self.fields['advertisement_price'].widget.attrs.update({'class': 'form-control', 'placeholder': 'New Price'})
+        self.fields['advertisement_price'].required = True
+        self.fields['advertisement_price'].help_text = 'Enter a positive price.'
+
+    class Meta:
+        model = Advertisements
+        fields = ['advertisement_price',]
 
 class RegisterUserForm(UserCreationForm):
     def __init__(self,*args,**kwargs):

@@ -51,9 +51,13 @@
                                                 <i class="bx bx-dots-vertical-rounded"></i>
                                             </button>
                                             <div class="dropdown-menu">
+                                                <a class="dropdown-item" href="{% url 'update_advertisement' pk=dxvl_log.advertisement_id %}">
+                                                    <i class="bx bx-pen me-1"></i>
+                                                    Edit
+                                                </a>
                                                 <a class="dropdown-item" href="{% url 'delete_advertisement' pk=dxvl_log.advertisement_id %}">
                                                     <i class="bx bx-trash me-1"></i>
-                                                    Delete
+                                                    Remove
                                                 </a>
                                                 <a class="dropdown-item" id="download_billing" data-bs-toggle="modal" data-bs-target="#downloadBillingStatementModal" data-billingname="{{ dxvl_log.advertisement_name }}" data-billingid="{{ dxvl_log.advertisement_id }}" href="#">
                                                     <i class="bx bx-download me-1"></i>

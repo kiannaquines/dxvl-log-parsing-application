@@ -19,7 +19,10 @@
                             <h5>DXVL Aired Advertisement Logs</h5>
                             <span class="text-muted">Your all existing logs in your database.</span>
                         </div>
-                        <button data-bs-toggle="modal" data-bs-target="#generateLogsModal" class="btn btn-primary">Generate Daily Logs</button>
+                        <div>
+                            <button data-bs-toggle="modal" data-bs-target="#generateReportModal" class="btn btn-primary">Download Report</button>
+                            <button data-bs-toggle="modal" data-bs-target="#generateLogsModal" class="btn btn-primary">Generate Daily Logs</button>
+                        </div>
                     </div>
                 </div>
                 <div class="table-responsive text-nowrap">
@@ -37,10 +40,10 @@
                         <tbody>
                             {% for dxvl_log in page_object %}
                             <tr>
-                                <td>{{ dxvl_log.advertisement }}</td>
+                                <td>{{ dxvl_log.advertisement|truncatechars:20 }}</td>
                                 <td>
                                     <span class="fw-medium">
-                                        {{ dxvl_log.artist }}
+                                        {{ dxvl_log.artist|truncatechars:20 }}
                                     </span>
                                 </td>
                                 <td>
@@ -127,6 +130,8 @@
     </div>
 </div>
 {% include './includes/generate_daily.html' %}
+{% include './includes/generate_daily_report.html' %}
+
 {% endblock content %}
 
 
@@ -147,6 +152,13 @@
         if (dayTo < 10) dayTo = '0' + dayTo;
         let valueTo = `${yearTo}-${monthTo}-${dayTo}`;
         $('#daily').val(valueTo);
+
+        $('#advertisement_name').select2( {
+            theme: "bootstrap-5",
+            width: $(this).data('width') ? $(this).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+            placeholder: $( this ).data( 'placeholder' ),
+            dropdownParent: $('#generateReportModal')
+        });
     });
 </script>
 {% endblock page_js %}

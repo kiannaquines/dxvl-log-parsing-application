@@ -171,7 +171,7 @@ def generate_daily_report(date, request):
 
     return filename
 
-def generate_weekly_report(request, week):
+def generate_weekly_overall_report(request, week):
     context = {}
     first_day_of_week, last_day_of_week = get_week_range(week)
 
@@ -227,8 +227,9 @@ def generate_monthly_report(request):
     advertisement_str = request.POST.get("advertisement_name", "").strip()
 
     datetime_from = timezone.make_aware(datetime.strptime(date_from_str, "%Y-%m-%d"))
-    datetime_to = timezone.make_aware(datetime.strptime(date_to_str, "%Y-%m-%d"))
-    range_date = (datetime_from, datetime_to)
+    end_date = timezone.make_aware(datetime.strptime(date_to_str, "%Y-%m-%d").replace(hour=23, minute=59, second=59, microsecond=999999))
+
+    range_date = (datetime_from, end_date)
 
     total_count = DXVLLogs.objects.filter(
         advertisement__icontains=advertisement_str,
@@ -291,6 +292,250 @@ def generate_monthly_report(request):
         return "unexpected_error"
 
     filename = f"monthly_report-{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
+    pdf_dir = os.path.join(MEDIA_ROOT, "pdfs")
+    os.makedirs(pdf_dir, exist_ok=True)
+    pdf_path = os.path.join(pdf_dir, filename)
+
+    with open(pdf_path, "wb") as pdf_file_out:
+        pdf_file_out.write(pdf_file.getvalue())
+
+    return filename
+
+
+
+def export_daily_report(request):
+    context = {}
+
+    date_from_str = request.POST.get("date_from")
+    advertisement_str = request.POST.get("advertisement_name", "").strip()
+
+    datetime_from = timezone.make_aware(datetime.strptime(date_from_str, "%Y-%m-%d"))
+
+    total_count = DXVLLogs.objects.filter(
+        advertisement__icontains=advertisement_str,
+        date_aired__date=datetime_from,
+    )
+
+    if total_count.count() == 0:
+        return "no_logs_found"
+
+    grouped_by_date = (
+        DXVLLogs.objects.filter(
+            date_aired__date=datetime_from, advertisement__icontains=advertisement_str
+        )
+        .annotate(grouped_date=TruncDate("date_aired"))
+        .values("grouped_date", "advertisement", "remarks")
+        .annotate(no_played=Count("log_id"))
+        .order_by("grouped_date")
+    )
+
+    monthly_data_logs = []
+
+    for grouped_data in grouped_by_date:
+
+        individual_logs_per_group = (
+            DXVLLogs.objects.filter(
+                date_aired__date=grouped_data["grouped_date"],
+                advertisement__icontains=grouped_data["advertisement"],
+                remarks=grouped_data["remarks"],
+            ).annotate(
+                time=TruncTime('date_aired'),
+            )
+        )
+
+        time_data = {f"time{i}": individual_log.time.strftime('%I:%M %p') for i, individual_log in enumerate(individual_logs_per_group)}
+
+        monthly_data_logs.append({
+                "grouped_data": grouped_data["grouped_date"].strftime("%Y-%m-%d"),
+                "advertisement": grouped_data["advertisement"],
+                "spots": time_data,
+                "remarks": grouped_data["remarks"],
+        })
+
+    max_spots = 0
+    for log in monthly_data_logs:
+        num_spots = len(log['spots'])
+        if num_spots > max_spots:
+            max_spots = num_spots
+
+    context["monthly_logs"] = monthly_data_logs
+    context["max_spots"] = max_spots
+    context["generated_date"] = datetime.now().strftime("%Y-%m-%d")
+    html_string = render_to_string("pdf_template/template_monthly.html", context)
+    pdf_file = BytesIO()
+
+    try:
+        HTML(string=html_string, base_url=request.build_absolute_uri()).write_pdf(
+            pdf_file
+        )
+    except Exception:
+        return "unexpected_error"
+
+    filename = f"daily_report-{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
+    pdf_dir = os.path.join(MEDIA_ROOT, "pdfs")
+    os.makedirs(pdf_dir, exist_ok=True)
+    pdf_path = os.path.join(pdf_dir, filename)
+
+    with open(pdf_path, "wb") as pdf_file_out:
+        pdf_file_out.write(pdf_file.getvalue())
+
+    return filename
+
+
+def generate_weekly_report(request):
+    context = {}
+
+    date_from_str = request.POST.get("date_from")
+    date_to_str = request.POST.get("date_to")
+    advertisement_str = request.POST.get("advertisement_name", "").strip()
+
+    datetime_from = timezone.make_aware(datetime.strptime(date_from_str, "%Y-%m-%d"))
+    datetime_to = datetime.strptime(date_to_str, "%Y-%m-%d")
+    
+    end_date = timezone.make_aware(datetime_to.replace(hour=23, minute=59, second=59, microsecond=999999))
+
+    range_date = (datetime_from, end_date)
+
+    total_count = DXVLLogs.objects.filter(
+        advertisement__icontains=advertisement_str,
+        date_aired__range=range_date,
+    )
+
+    if total_count.count() == 0:
+        return "no_logs_found"
+
+    grouped_by_date = (
+        DXVLLogs.objects.filter(
+            date_aired__range=range_date, advertisement__icontains=advertisement_str
+        )
+        .annotate(grouped_date=TruncDate("date_aired"))
+        .values("grouped_date", "advertisement", "remarks")
+        .annotate(no_played=Count("log_id"))
+        .order_by("grouped_date")
+    )
+
+    monthly_data_logs = []
+
+    for grouped_data in grouped_by_date:
+
+        individual_logs_per_group = (
+            DXVLLogs.objects.filter(
+                date_aired__date=grouped_data["grouped_date"],
+                advertisement__icontains=grouped_data["advertisement"],
+                remarks=grouped_data["remarks"],
+            ).annotate(
+                time=TruncTime('date_aired'),
+            )
+        )
+
+        time_data = {f"time{i}": individual_log.time.strftime('%I:%M %p') for i, individual_log in enumerate(individual_logs_per_group)}
+
+        monthly_data_logs.append({
+                "grouped_data": grouped_data["grouped_date"].strftime("%Y-%m-%d"),
+                "advertisement": grouped_data["advertisement"],
+                "spots": time_data,
+                "remarks": grouped_data["remarks"],
+        })
+
+    max_spots = 0
+    for log in monthly_data_logs:
+        num_spots = len(log['spots'])
+        if num_spots > max_spots:
+            max_spots = num_spots
+
+    context["monthly_logs"] = monthly_data_logs
+    context["max_spots"] = max_spots
+    context["generated_date"] = datetime.now().strftime("%Y-%m-%d")
+    html_string = render_to_string("pdf_template/template_monthly.html", context)
+    pdf_file = BytesIO()
+
+    try:
+        HTML(string=html_string, base_url=request.build_absolute_uri()).write_pdf(
+            pdf_file
+        )
+    except Exception:
+        return "unexpected_error"
+
+    filename = f"weekly_report-{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
+    pdf_dir = os.path.join(MEDIA_ROOT, "pdfs")
+    os.makedirs(pdf_dir, exist_ok=True)
+    pdf_path = os.path.join(pdf_dir, filename)
+
+    with open(pdf_path, "wb") as pdf_file_out:
+        pdf_file_out.write(pdf_file.getvalue())
+
+    return filename
+
+
+
+def generate_daily_testing_report(request):
+    context = {}
+
+    date_from_str = request.POST.get("date_from")
+    advertisement_str = request.POST.get("advertisement_name", "").strip()
+    date_from = timezone.make_aware(datetime.strptime(date_from_str, "%Y-%m-%d"))
+
+    total_count = DXVLLogs.objects.filter(
+        advertisement__icontains=advertisement_str,
+        date_aired__date=date_from_str,
+    )
+
+    if total_count.count() == 0:
+        return "no_logs_found"
+
+    grouped_by_date = (
+        DXVLLogs.objects.filter(
+            date_aired__date=date_from, advertisement__icontains=advertisement_str
+        )
+        .annotate(grouped_date=TruncDate("date_aired"))
+        .values("grouped_date", "advertisement", "remarks")
+        .annotate(no_played=Count("log_id"))
+        .order_by("grouped_date")
+    )
+
+    monthly_data_logs = []
+
+    for grouped_data in grouped_by_date:
+
+        individual_logs_per_group = (
+            DXVLLogs.objects.filter(
+                date_aired__date=grouped_data["grouped_date"],
+                advertisement__icontains=grouped_data["advertisement"],
+                remarks=grouped_data["remarks"],
+            ).annotate(
+                time=TruncTime('date_aired'),
+            )
+        )
+
+        time_data = {f"time{i}": individual_log.time.strftime('%I:%M %p') for i, individual_log in enumerate(individual_logs_per_group)}
+
+        monthly_data_logs.append({
+                "grouped_data": grouped_data["grouped_date"].strftime("%Y-%m-%d"),
+                "advertisement": grouped_data["advertisement"],
+                "spots": time_data,
+                "remarks": grouped_data["remarks"],
+        })
+
+    max_spots = 0
+    for log in monthly_data_logs:
+        num_spots = len(log['spots'])
+        if num_spots > max_spots:
+            max_spots = num_spots
+
+    context["monthly_logs"] = monthly_data_logs
+    context["max_spots"] = max_spots
+    context["generated_date"] = datetime.now().strftime("%Y-%m-%d")
+    html_string = render_to_string("pdf_template/template_monthly.html", context)
+    pdf_file = BytesIO()
+
+    try:
+        HTML(string=html_string, base_url=request.build_absolute_uri()).write_pdf(
+            pdf_file
+        )
+    except Exception:
+        return "unexpected_error"
+
+    filename = f"daily_daily_report-{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
     pdf_dir = os.path.join(MEDIA_ROOT, "pdfs")
     os.makedirs(pdf_dir, exist_ok=True)
     pdf_path = os.path.join(pdf_dir, filename)

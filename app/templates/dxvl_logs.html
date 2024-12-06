@@ -20,7 +20,7 @@
                     <a href="{% url 'upload_advertisement_logs' %}" class="btn btn-primary">Add Aired Advertisement</a>
                 </div>
                 <div class="table-responsive text-nowrap">
-                    <table class="table" id="MydataTable">
+                    <table class="table" id="dataTable">
                         <caption class="ms-3">Aired advertisement of DXVL</caption>
                         <thead>
                             <tr>
@@ -34,9 +34,13 @@
                         <tbody>
                             {% for dxvl_log in page_object %}
                             <tr>
-                                <td>{{ dxvl_log.advertisement }}</td>
                                 <td>
-                                    <span class="fw-medium">
+                                    <span class="d-inline-block text-truncate" style="max-width: 150px;">
+                                        {{ dxvl_log.advertisement }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="d-inline-block text-truncate fw-medium" style="max-width: 150px;">
                                         {{ dxvl_log.artist }}
                                     </span>
                                 </td>

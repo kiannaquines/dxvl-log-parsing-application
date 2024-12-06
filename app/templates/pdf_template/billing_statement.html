@@ -76,12 +76,12 @@
         <div style="margin-top: 2px;">
             <span style="text-align: left;">
                 Account Name:
-                <b>SUPERRAMA</b>
+                <b>{{ account_name }}</b>
             </span>
             <br>
             <span style="text-align: left;">
                 Billing Date:
-                <b>November 30, 2024</b>
+                <b>{{ current_date }}</b>
             </span>
             <br>
             <span style="text-align: left;">Bill No.:</span>
@@ -94,18 +94,15 @@
             </tr>
             <tr>
                 <td class="noBorder textCenter">
-                    <b>60-seconder radio plug</b>
+                    <b>{{ particulars }}</b>
                 </td>
                 <td class="textCenter">
                     <b>
-                        5,500/Month 
-                        May 01 to 
-                        August 17,
-                        2024
+                        {{ date_range }}
                     </b>
                 </td>
                 <td class="noBorder textCenter">
-                    <b>P18,210.00</b>
+                    <b>{{ total }}</b>
                 </td>
             </tr>
             <tr>
@@ -113,7 +110,7 @@
                     <b class="addedBackground">TOTAL AMOUNT DUE</b>
                 </td>
                 <td class="textCenter">
-                    <b>P 18,210.00</b>
+                    <b>{{ total }}</b>
                 </td>
             </tr>
         </table>
@@ -123,18 +120,18 @@
         <h4>Prepaired by</h4>
         <table class="totallyNoBorder">
             <tr class="totallyNoBorder">
-                <td style="width: 50%;" class="totallyNoBorder textCenter">
+                <td style="width: 50%;" class="totallyNoBorder">
                     JAYSON C. PASCUAL
                 </td>
-                <td style="width: 50%;" class="totallyNoBorder textCenter">
+                <td style="width: 50%;" class="totallyNoBorder">
                     VILMA M. SANTOS
                 </td>
             </tr>
             <tr class="totallyNoBorder">
-                <td style="width: 50%;" class="totallyNoBorder textCenter">
+                <td style="width: 50%;" class="totallyNoBorder textAlignRight">
                     <b>SALES HEAD</b>
                 </td>
-                <td style="width: 50%;" class="totallyNoBorder textCenter">
+                <td style="width: 50%;" class="totallyNoBorder textAlignRight">
                     <b>STATION MANAGER</b>
                 </td>
             </tr>

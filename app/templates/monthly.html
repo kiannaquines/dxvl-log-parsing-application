@@ -29,7 +29,6 @@
                             <tr>
                                 <th>Advertisement</th>
                                 <th>Artist</th>
-                                <th>No. Played</th>
                                 <th>Remarks</th>
                                 <th>Status</th>
                             </tr>
@@ -43,7 +42,6 @@
                                         {{ dxvl_log.artist|truncatechars:15 }}
                                     </span>
                                 </td>
-                                <td>{{ dxvl_log.ads_count }}</td>
                                 <td>
                                     {% if dxvl_log.remarks == True %}
                                     <span class="badge bg-label-primary me-1">

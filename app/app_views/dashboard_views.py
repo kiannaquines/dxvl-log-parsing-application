@@ -34,7 +34,7 @@ def dashboard_page_view(request):
     context["total_last_week_logs"] = f"{result_logs_last_week:,}"
     context["total_logs_this_week"] = f"{result_total_logs_this_week:,}"
     context["total_users"] = f"{result_users:,}"
-
+    context["count_unknown_artist"] = f"{DXVLLogs.objects.filter(artist__icontains="Unknow").count():,}"
     return render(request, "dashboard.html",context)
 
 

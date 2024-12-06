@@ -1,6 +1,6 @@
 {% extends "./../includes/base.html" %}
 {% load static %}
-{% block title %}Edit User Information{% endblock title %}
+{% block title %}Update Advertisement Information{% endblock title %}
 
 {% block page_css %}
 <link rel="stylesheet" href="{% static 'assets/vendor/libs/apex-charts/apex-charts.css' %}">
@@ -12,32 +12,23 @@
         <div class="card">
             <div class="row row-bordered g-0">
                 <div class="card-header m-0 me-2 pb-3"> 
-                    <h5>Edit Information</h5>
-                    <span class="text-muted">Edit existing information on your record</span>
+                    <h5>Update advertisement information</h5>
+                    <span class="text-muted">Update existing record</span>
                 </div>
                 <div class="card-body">
                     <div class="col-md-12">
                         <form method="post">
                             {% csrf_token %}
-                            {% for input in edit_form %}
-                                {% if input.id_for_label == "id_is_active" or input.id_for_label == "id_is_superuser" or input.id_for_label == "id_is_staff" %}
-                                <div class="row">
-                                    <div class="form-group mb-3">
-                                        {{ input }}
-                                        <label for="{{ input.id_for_label }}" class="form-label">{{ input.label }}</label>
-                                    </div>
-                                </div>
-                                {% else %}
+                            {% for input in form %}
                                 <div class="row">
                                     <div class="form-group mb-3">
                                         <label for="{{ input.id_for_label }}" class="form-label">{{ input.label }}</label>
                                         {{ input }}
                                     </div>
                                 </div>
-                                {% endif %}
                             {% endfor %}
                             <div class="form-group">
-                                <input type="submit" class="btn btn-primary" value="Save Changes">
+                                <input type="submit" class="btn btn-primary" value="Save changes">
                                 <input type="button" onclick="back()" class="btn btn-default" value="Back">
                             </div>
                         </form>

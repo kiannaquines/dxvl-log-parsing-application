@@ -21,8 +21,8 @@ def process_line(line, pattern, user):
         time, artist, advertisement = match.groups()
         return DXVLLogs(
             date_aired = time_parser(time),
-            artist = artist,
-            advertisement = advertisement,
+            artist = artist.strip(),
+            advertisement = advertisement.strip(),
             added_by = DXVLUsers.objects.get(username=user)
         )
     

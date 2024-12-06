@@ -61,9 +61,22 @@
                 paging: false,
                 lengthChange: false,
             });
+
+
+            $("#datatable").DataTable({
+                pageLength: 50,
+                searching: false,
+                lengthChange: false,
+                paging: false,
+            })
+
+            $("#dataTable_wrapper").children().first().addClass("m-3")
+            $("#dataTable_wrapper").children().last().addClass("m-3")
             
+            $("#datatable_info").addClass('m-3')
             $("#MydataTable_wrapper").children().first().addClass("m-3")
             $("#MydataTable_wrapper").children().last().addClass("m-3")
+
             $(".dt-select-checkbox").addClass("form-check-input")
             $("#dt-search-0").removeClass("form-control-sm")
             $("#dt-search-0").addClass("form-control-md")
