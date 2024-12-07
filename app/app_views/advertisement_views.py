@@ -7,7 +7,7 @@ from django.http import (
 )
 from app.commons.logs_services import *
 from django.urls import reverse_lazy
-from app.models import DXVLLogs,Advertisements
+from app.models import DXVLLogs,Advertisements, SearchKeyWords
 from django.contrib.auth.decorators import login_required
 from app.commons.common_services import (
     all_objects_only,
@@ -163,6 +163,7 @@ def dxvl_logs_view(request):
     )
     page_obj = pagination(dxvl_logs, request.GET.get("page"), 2000)
     context["page_object"] = page_obj
+    context['search_keywords'] = SearchKeyWords.objects.all()
     return render(request, "dxvl_logs.html", context)
 
 

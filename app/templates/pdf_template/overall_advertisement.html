@@ -1,0 +1,137 @@
+{% load static %}
+{% load custom_filters %}
+{% load custom_tags %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        @page {
+            size: A3 landscape;
+            margin: 35pt 35pt 35pt 35pt;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+            margin: 0;
+        }
+
+        #header_content{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        #header_content .header_text{
+            text-align: right;
+        }
+
+        #header_content .header_img img{
+            width: 150px;
+            height: 80px;
+        }
+
+        #header_content h3 {
+            margin: 0;
+            padding: 0;
+            font-size: 25px;
+            color: #0850a0;
+        }
+
+        #header_content p {
+            margin: 0;
+            padding: 0;
+        }
+
+        #customers {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 2rem;
+        }
+
+        #customers thead tr th {
+            border: 1px double #fefefe;
+            padding: 4px;
+            background-color: #0850a0;
+            color: #fefefe;
+        }
+
+        .border_header{
+            border: 2px solid #0850a0;
+            margin-top: 13px;
+            margin-bottom: 13px;
+        }
+
+        #customers tbody tr td {
+            border: 1px solid #efefef;
+            padding: 4px;
+        }
+
+        #customers tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        #customers th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            color: black;
+        }
+
+        #content_footer {
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="header_content">
+        <div class="header_img">
+            <img src="{% static 'assets/img/icons/logo.png' %}" alt="DXVL Logo Here">
+        </div>
+        <div class="header_text">
+            <h3>DXVL - FM KOOL 94.9 mHz</h3>
+            <p>DXVL New Broadcast Center (beside UICT Bldg.)</p>
+            <p>USM Compound, Kabacan, Cotabato</p>
+            <p>Email Address: dxvlkoolfm@gmail.com</p>
+            <p>Facebook Page: www.facebook.com/usmkoolfm</p>
+        </div>
+    </div>
+    <div class="border_header"></div>    
+    <div id="content_frame">
+        <table id="customers">
+            <thead>
+                <tr>
+                    <th>Advertisement</th>
+                    <th>Date</th>
+                    {% for i in max_spots|custom_range %}
+                        <th>Spot {{ forloop.counter }}</th>
+                    {% endfor %}
+                    <th>Remarks</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in company_advertisement %}
+                <tr>
+                    <td>{{ item.advertisement }}</td>
+                    <td>{{ item.grouped_data }}</td>
+                    {% for index in max_spots|custom_range %}
+                    {% with "time" as current_index %}
+                    {% concat_str current_index index as time_prefix %}
+                    <td>{{ item.spots|get_item:time_prefix|default:"-" }}</td>
+                    {% endwith %}
+                    {% endfor %}
+                    <td>{{ item.remarks|yesno:"Aired,Unaired" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div id="content_footer">
+        <h3>Effective Areas Of Coverage</h3>
+        <p>Kabacan, Matalam, Kidapawan City, Pres. Roxas, Antipas, Makilala, Mlang, Tuluan, Datu Paglas, Buluan, Tacurung City, Lambayong, Isulan, Datu Montawal, Pikit, Carmen, Aleosan, Midsayap, Libungan, Pigcawayan, Alamada, Banisilan, Damulog, Cotabato City, Bansalan.</p>
+    </div>
+</body>
+</html>

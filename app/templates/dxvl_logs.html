@@ -17,7 +17,12 @@
                         <h5>DXVL Aired Advertisement Logs</h5>
                         <span class="text-muted">List of logs aired in DXVL Radio Station</span>
                     </div>
-                    <a href="{% url 'upload_advertisement_logs' %}" class="btn btn-primary">Add Aired Advertisement</a>
+
+
+                    <div>
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#generateLogsModal" class="btn btn-primary">Export Advertisement Log</a>
+                        <a href="{% url 'upload_advertisement_logs' %}" class="btn btn-primary">Add Aired Advertisement</a>
+                    </div>
                 </div>
                 <div class="table-responsive text-nowrap">
                     <table class="table" id="dataTable">
@@ -127,10 +132,64 @@
         </div>
     </div>
 </div>
+
+
+<div
+    class="modal fade"
+    id="generateLogsModal"
+    tabindex="-1"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCenterTitle">Generate Advertisement</h5>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'export_search_keywords' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="col">
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label for="search_keyword" class="form-label">Select Keyword</label>
+                                <select name="search_keyword" id="search_keyword">
+                                    {% for item in search_keywords %}
+                                    <option value="{{ item.id }}">{{ item.keyword }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-12">
+                                <button type="submit" class="btn btn-primary">Export PDF</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 {% endblock content %}
 
 
 {% block page_js %}
 <script src="{% static 'assets/vendor/libs/apex-charts/apexcharts.js' %}"></script>
 <script src="{% static 'assets/js/dashboards-analytics.js' %}"></script>
+<script>
+    $(document).ready(function(){
+        $('#search_keyword' ).select2( {
+            theme: "bootstrap-5",
+            width: $(this).data('width') ? $(this).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+            placeholder: $( this ).data( 'placeholder' ),
+            dropdownParent: $('#generateLogsModal')
+        });
+    });
+</script>
 {% endblock page_js %}

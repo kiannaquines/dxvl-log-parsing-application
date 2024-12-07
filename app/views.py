@@ -1,6 +1,7 @@
 from datetime import datetime
+import os
 from django.contrib import messages
-from django.http import HttpResponse
+from django.http import FileResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from app.decorators import already_loggedin
 from app.forms import *
@@ -21,6 +22,46 @@ from xhtml2pdf import pisa
 from django.utils.formats import number_format
 from django.utils import timezone
 from django.views.generic import View, CreateView, DeleteView, UpdateView
+
+from app.commons.generate_report_services import generate_by_company_report
+from dxvl.settings import BASE_DIR
+
+
+class ExportSearchKeywordView(View):
+    def post(self, request):
+        if request.method == "POST":
+            search_keyword_id = request.POST.get('search_keyword')
+            keyword = SearchKeyWords.objects
+            
+            if keyword.count() > 0:
+                keyword = keyword.get(id=search_keyword_id)
+                result = generate_by_company_report(request, keyword.keyword)
+
+                if result == "no_logs_found":
+                    messages.error(request, 'No logs found for the keyword, please try again later.',extra_tags='danger')
+                    return HttpResponseRedirect(reverse_lazy('logs_view'))
+                
+                pdf_path = os.path.join(BASE_DIR, "media", "pdfs", result)
+
+                if not os.path.exists(pdf_path):
+                    messages.error(
+                        request,
+                        "The generated file could not be found.",
+                        extra_tags="danger",
+                    )
+                    return HttpResponseRedirect(reverse_lazy("logs_view"))
+        
+                response = FileResponse(
+                    open(pdf_path, "rb"), content_type="application/pdf"
+                )
+                response["Content-Disposition"] = (
+                    f'attachment; filename="{os.path.basename(pdf_path)}"'
+                )
+                return response
+                   
+            messages.error(request, 'Invalid keyword, please try again later.',extra_tags='danger')
+            return HttpResponseRedirect(reverse_lazy('logs_view'))
+
 
 class SearchKeywordsView(View):
     template_name = 'keywords.html'

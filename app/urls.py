@@ -49,4 +49,6 @@ urlpatterns = [
     path('advertisment/search-keywords/add', AddSearchKeywordsView.as_view(), name="add_search_keywords"),
     path('advertisment/search-keywords/edit/<int:pk>', UpdateSearchKeywordView.as_view(), name="update_search_keywords"),
     path('advertisment/search-keywords/delete/<int:pk>', DeleteSearchKeywordView.as_view(), name="delete_search_keywords"),
+
+    path('advertisement/search-keywords/export', ExportSearchKeywordView.as_view(), name="export_search_keywords"),
 ]

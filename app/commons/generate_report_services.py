@@ -544,3 +544,79 @@ def generate_daily_testing_report(request):
         pdf_file_out.write(pdf_file.getvalue())
 
     return filename
+
+
+
+
+
+def generate_by_company_report(request, keyword):
+    context = {}
+
+    total_count = DXVLLogs.objects.filter(
+        advertisement__icontains=keyword,
+    )
+
+    if total_count.count() == 0:
+        return "no_logs_found"
+
+    grouped_by_date = (
+        DXVLLogs.objects.filter(
+           advertisement__icontains=keyword
+        )
+        .annotate(grouped_date=TruncDate("date_aired"))
+        .values("grouped_date", "advertisement", "remarks")
+        .annotate(no_played=Count("log_id"))
+        .order_by("grouped_date")
+    )
+
+    monthly_data_logs = []
+
+    for grouped_data in grouped_by_date:
+
+        individual_logs_per_group = (
+            DXVLLogs.objects.filter(
+                date_aired__date=grouped_data["grouped_date"],
+                advertisement__icontains=grouped_data["advertisement"],
+                remarks=grouped_data["remarks"],
+            ).annotate(
+                time=TruncTime('date_aired'),
+            )
+        )
+
+        time_data = {f"time{i}": individual_log.time.strftime('%I:%M %p') for i, individual_log in enumerate(individual_logs_per_group)}
+
+        monthly_data_logs.append({
+                "grouped_data": grouped_data["grouped_date"].strftime("%Y-%m-%d"),
+                "advertisement": grouped_data["advertisement"],
+                "spots": time_data,
+                "remarks": grouped_data["remarks"],
+        })
+
+    max_spots = 0
+    for log in monthly_data_logs:
+        num_spots = len(log['spots'])
+        if num_spots > max_spots:
+            max_spots = num_spots
+
+    context["company_advertisement"] = monthly_data_logs
+    context["max_spots"] = max_spots
+    context["generated_date"] = datetime.now().strftime("%Y-%m-%d")
+    html_string = render_to_string("pdf_template/overall_advertisement.html", context)
+    pdf_file = BytesIO()
+
+    try:
+        HTML(string=html_string, base_url=request.build_absolute_uri()).write_pdf(
+            pdf_file
+        )
+    except Exception:
+        return "unexpected_error"
+
+    filename = f"{keyword}_report-{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
+    pdf_dir = os.path.join(MEDIA_ROOT, "pdfs")
+    os.makedirs(pdf_dir, exist_ok=True)
+    pdf_path = os.path.join(pdf_dir, filename)
+
+    with open(pdf_path, "wb") as pdf_file_out:
+        pdf_file_out.write(pdf_file.getvalue())
+
+    return filename
