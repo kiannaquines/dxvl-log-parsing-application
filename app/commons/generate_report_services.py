@@ -149,6 +149,7 @@ def generate_daily_report(date, request):
 
     context = {}
     context["daily_logs"] = daily_logs
+    context["total_ads"] = daily_logs.count()
     context["generated_date"] = datetime.now().strftime("%Y-%m-%d")
 
     html_string = render_to_string("pdf_template/template_daily.html", context)
@@ -198,6 +199,7 @@ def generate_weekly_overall_report(request, week):
             all_logs.extend(chunk_logs)
 
     context["weekly_logs"] = all_logs
+    context["total_ads"] = total_count
     context["generated_date"] = datetime.now().strftime("%Y-%m-%d")
     html_string = render_to_string("pdf_template/template_weekly.html", context)
     pdf_file = BytesIO()
@@ -280,6 +282,7 @@ def generate_monthly_report(request):
 
     context["monthly_logs"] = monthly_data_logs
     context["max_spots"] = max_spots
+    context["total_ads"] = total_count.count()
     context["generated_date"] = datetime.now().strftime("%Y-%m-%d")
     html_string = render_to_string("pdf_template/template_monthly.html", context)
     pdf_file = BytesIO()
@@ -300,8 +303,6 @@ def generate_monthly_report(request):
         pdf_file_out.write(pdf_file.getvalue())
 
     return filename
-
-
 
 def export_daily_report(request):
     context = {}
@@ -360,6 +361,7 @@ def export_daily_report(request):
 
     context["monthly_logs"] = monthly_data_logs
     context["max_spots"] = max_spots
+    context["total_ads"] = total_count.count()
     context["generated_date"] = datetime.now().strftime("%Y-%m-%d")
     html_string = render_to_string("pdf_template/template_monthly.html", context)
     pdf_file = BytesIO()
@@ -380,7 +382,6 @@ def export_daily_report(request):
         pdf_file_out.write(pdf_file.getvalue())
 
     return filename
-
 
 def generate_weekly_report(request):
     context = {}
@@ -445,6 +446,7 @@ def generate_weekly_report(request):
 
     context["monthly_logs"] = monthly_data_logs
     context["max_spots"] = max_spots
+    context["total_ads"] = total_count.count()
     context["generated_date"] = datetime.now().strftime("%Y-%m-%d")
     html_string = render_to_string("pdf_template/template_monthly.html", context)
     pdf_file = BytesIO()
@@ -465,8 +467,6 @@ def generate_weekly_report(request):
         pdf_file_out.write(pdf_file.getvalue())
 
     return filename
-
-
 
 def generate_daily_testing_report(request):
     context = {}
@@ -524,6 +524,7 @@ def generate_daily_testing_report(request):
 
     context["monthly_logs"] = monthly_data_logs
     context["max_spots"] = max_spots
+    context["total_ads"] = total_count.count()
     context["generated_date"] = datetime.now().strftime("%Y-%m-%d")
     html_string = render_to_string("pdf_template/template_monthly.html", context)
     pdf_file = BytesIO()
@@ -545,29 +546,51 @@ def generate_daily_testing_report(request):
 
     return filename
 
-
-
-
-
-def generate_by_company_report(request, keyword):
+def generate_by_company_report(request, keyword, from_date, to_date):
     context = {}
 
-    total_count = DXVLLogs.objects.filter(
-        advertisement__icontains=keyword,
-    )
+
+    if from_date and to_date:
+
+        date_from = timezone.make_aware(datetime.strptime(from_date, "%Y-%m-%d"))
+        date_to = timezone.make_aware(datetime.strptime(to_date, "%Y-%m-%d"))
+        end_date = date_to.replace(hour=23, minute=59, second=59, microsecond=999999)
+
+        total_count = DXVLLogs.objects.filter(
+            advertisement__icontains=keyword,
+            date_aired__range=(date_from, end_date),
+        )
+
+
+        grouped_by_date = (
+            DXVLLogs.objects.filter(
+                advertisement__icontains=keyword,
+                date_aired__range=(date_from, end_date)
+            )
+            .annotate(grouped_date=TruncDate("date_aired"))
+            .values("grouped_date", "advertisement", "remarks")
+            .annotate(no_played=Count("log_id"))
+            .order_by("grouped_date")
+        )
+        
+    else:
+        total_count = DXVLLogs.objects.filter(
+            advertisement__icontains=keyword,
+        )
+
+        grouped_by_date = (
+            DXVLLogs.objects.filter(
+                advertisement__icontains=keyword,
+            )
+            .annotate(grouped_date=TruncDate("date_aired"))
+            .values("grouped_date", "advertisement", "remarks")
+            .annotate(no_played=Count("log_id"))
+            .order_by("grouped_date")
+        )
 
     if total_count.count() == 0:
         return "no_logs_found"
 
-    grouped_by_date = (
-        DXVLLogs.objects.filter(
-           advertisement__icontains=keyword
-        )
-        .annotate(grouped_date=TruncDate("date_aired"))
-        .values("grouped_date", "advertisement", "remarks")
-        .annotate(no_played=Count("log_id"))
-        .order_by("grouped_date")
-    )
 
     monthly_data_logs = []
 
@@ -600,6 +623,7 @@ def generate_by_company_report(request, keyword):
 
     context["company_advertisement"] = monthly_data_logs
     context["max_spots"] = max_spots
+    context["total_ads"] = total_count.count()
     context["generated_date"] = datetime.now().strftime("%Y-%m-%d")
     html_string = render_to_string("pdf_template/overall_advertisement.html", context)
     pdf_file = BytesIO()

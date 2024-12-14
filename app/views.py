@@ -31,11 +31,15 @@ class ExportSearchKeywordView(View):
     def post(self, request):
         if request.method == "POST":
             search_keyword_id = request.POST.get('search_keyword')
+            search_from_date = request.POST.get('search_from_date')
+            search_to_date = request.POST.get('search_to_date')
+
+
             keyword = SearchKeyWords.objects
             
             if keyword.count() > 0:
                 keyword = keyword.get(id=search_keyword_id)
-                result = generate_by_company_report(request, keyword.keyword)
+                result = generate_by_company_report(request, keyword.keyword, search_from_date, search_to_date)
 
                 if result == "no_logs_found":
                     messages.error(request, 'No logs found for the keyword, please try again later.',extra_tags='danger')
