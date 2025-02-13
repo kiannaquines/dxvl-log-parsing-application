@@ -44,16 +44,24 @@ TEMPLATES = [
 ]
 WSGI_APPLICATION = 'dxvl.wsgi.application'
 DATABASES = {
+    # "default": {
+    #     "ENGINE": "django.db.backends.mysql",
+    #     "NAME": "dxvl_db",
+    #     "HOST": "localhost",
+    #     "USER": "root",
+    #     "PASSWORD": "<PASSWORD_HERE>",
+    #     "PORT": "3306",
+    #     "OPTIONS": {
+    #         "init_command": "SET sql_mode='STRICT_TRANS_TABLES'"
+    #     }
+    # }
     "default": {
-        "ENGINE": "django.db.backends.mysql",
+        "ENGINE": "django.db.backends.postgresql",
         "NAME": "dxvl_db",
         "HOST": "localhost",
-        "USER": "root",
-        "PASSWORD": "",
-        "PORT": "3306",
-        "OPTIONS": {
-            "init_command": "SET sql_mode='STRICT_TRANS_TABLES'"
-        }
+        "USER": "postgres",
+        "PASSWORD": "<PASSWORD_HERE>",
+        "PORT": "5432",
     }
 }
 AUTH_PASSWORD_VALIDATORS = [
