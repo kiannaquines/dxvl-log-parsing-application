@@ -18,11 +18,6 @@ Run the application using a different port.
 python3 manage.py runserver <PORT_NUMBER>
 ```
 
-## Wanna know about me?
-
-```
-aHR0cHM6Ly9naXRodWIuY29tL2tpYW5uYXF1aW5lcy8=
-```
 
 ## Initial Photo of the system (Not Final)
 
