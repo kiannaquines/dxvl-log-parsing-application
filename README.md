@@ -1,4 +1,4 @@
-## Project Guide
+## Guide
 
 Before running the application, you'll need to install dependencies, to install run this command
 
